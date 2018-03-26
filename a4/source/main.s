@@ -3,10 +3,10 @@
 
 @ASSIGNMENT CHECK LIST[]
 
-@Main Menu Screen	  		[]5
-@Draw game State 		    []29
-@Draw game menu	  			[]4
-@interact with game	  		[]8
+@Main Menu Screen	  	[]5
+@Draw game State 		[]29
+@Draw game menu	  		[]4
+@interact with game	  	[]8
 @interact with game menu	[]4
 
 
@@ -17,10 +17,9 @@
 
 .global main
 main:
-
-	ldr		r0, =frameBufferInfo
+	@ ask for the frame buffer information
+	ldr		r0, =frameBufferInfo		@frame buffer information structure
 	bl		initFbInfo
-	
 	
 	
 	
@@ -30,9 +29,16 @@ main:
 
 @ Data section
 .section .data
+
+.align
+.global frameBufferInfo
 frameBufferInfo:
 .int 0			@ frame buffer pointer
 .int 0			@ screen width
 .int 0			@ screen height
+
+@For drawing ASCII TEXT
+.align 4
+font:	.incbin "font.bin"
 
 
