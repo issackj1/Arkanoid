@@ -10,7 +10,7 @@ drawLeftBorder:
 	x	.req	r4
 	y	.req	r5
 		
-	mov		x,	#500
+	mov		x,	#494
 	mov		y,	#500
 	
 	ldr		r6,	=leftBorder
@@ -29,7 +29,7 @@ loop:
 	
 	cmp		r7,	#6
 	blt		loop
-	mov		x,	#500
+	mov		x,	#494
 	mov		r7, #0
 	
 	add		r8,	#1
@@ -46,7 +46,7 @@ drawRightBorder:
 	x	.req	r4
 	y	.req	r5
 		
-	mov		x,	#714
+	mov		x,	#708
 	mov		y,	#500
 	
 	ldr		r6,	=rightBorder
@@ -65,7 +65,7 @@ loopr:
 	
 	cmp		r7,	#6
 	blt		loopr
-	mov		x,	#714
+	mov		x,	#708
 	mov		r7, #0
 	
 	add		r8,	#1
@@ -82,8 +82,8 @@ drawTopBorder:
 	x	.req	r4
 	y	.req	r5
 		
-	mov		x,	#500
-	mov		y,	#500
+	mov		x,	#494
+	mov		y,	#493
 	
 	ldr		r6,	=topBorder
 	mov		r7,	#0
@@ -101,7 +101,7 @@ loopt:
 	
 	cmp		r7,	#220
 	blt		loopt
-	mov		x,	#500
+	mov		x,	#494
 	mov		r7, #0
 	
 	add		r8,	#1
