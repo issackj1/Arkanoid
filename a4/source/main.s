@@ -25,6 +25,9 @@ main:
 	bl		drawLeftBorder
 	bl		drawRightBorder
 	bl		drawTopBorder
+	mov		r0,	#500
+	mov		r1,	#510
+	@bl		drawBlueBlock
 	
 	
 	
@@ -46,6 +49,11 @@ frameBufferInfo:
 @For drawing ASCII TEXT
 .align 4
 font:	.incbin "font.bin"
+
+.global map
+map:
+.skip 20 * 20
+.end
 
 
 

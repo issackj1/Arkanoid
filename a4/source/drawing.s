@@ -11,7 +11,7 @@ drawLeftBorder:
 	y	.req	r5
 		
 	mov		x,	#494
-	mov		y,	#500
+	mov		y,	#502
 	
 	ldr		r6,	=leftBorder
 	mov		r7,	#0
@@ -47,7 +47,7 @@ drawRightBorder:
 	y	.req	r5
 		
 	mov		x,	#708
-	mov		y,	#500
+	mov		y,	#502
 	
 	ldr		r6,	=rightBorder
 	mov		r7,	#0
@@ -83,7 +83,7 @@ drawTopBorder:
 	y	.req	r5
 		
 	mov		x,	#494
-	mov		y,	#493
+	mov		y,	#495
 	
 	ldr		r6,	=topBorder
 	mov		r7,	#0
@@ -114,39 +114,74 @@ loopt:
 
 .global drawBackGround
 drawBackGround:
-	push		{r4-r9, lr}
-	mov 	r5, #0	// r5 is count x
-	mov 	r8, #0	// r8 is count y
+	push	{r4-r9, lr}
+	x	.req	r4
+	y	.req	r5
+		
+	mov		x,	#500
+	mov		y,	#500
 	
-	ldr		r4, =background
-	mov 	r6, #500	// x is r6
-	mov 	r7, #500	// y is r7
-
-loopcol:
-
+	ldr		r6,	=backGround
+	mov		r7,	#0
+	mov		r8,	#0
 	
-looprow:
-	mov 	r0, r6
-	mov 	r1, r7
-	ldr		r2, [r4]
-	//mov	r2, #0x00FF0000	
-	bl 		DrawPixel
+loopb:
+	mov		r0,	x
+	mov		r1,	y
+	ldr		r2,	[r6]
+	bl		DrawPixel
 	
-	add 	r5, #1
-	add 	r6, #1
-	//add r7, r8
-	add 	r4, #4
-	cmp		r5, #208
-	blt		looprow
-	mov 	r6, #500
-	mov		r5, #0
+	add		x,	#1
+	add		r6,	#4
+	add		r7,	#1
 	
+	cmp		r7,	#208
+	blt		loopb
+	mov		x,	#500
+	mov		r7, #0
+	
+	add		r8,	#1
+	add		y,	#1
 	cmp 	r8, #232
-	addlt 	r8, #1
-	addlt 	r7, #1
-	blt 	loopcol
+	blt 	loopb
 
 	pop		{r4-r9, pc}
+	
+.global drawBlueBlock	
+drawBlueBlock:
+	push	{r4-r9, lr}
+	x	.req	r4
+	y	.req	r5
+		
+	mov		x,	r0
+	mov		y,	r1
+	
+	ldr		r6,	=blueBlock
+	mov		r7,	#0
+	mov		r8,	#0
+	
+loopBlue:
+	mov		r0,	x
+	mov		r1,	y
+	ldr		r2,	[r6]
+	bl		DrawPixel
+	
+	add		x,	#1
+	add		r6,	#4
+	add		r7,	#1
+	
+	cmp		r7,	#16
+	blt		loopBlue
+	mov		x,	#500
+	mov		r7, #0
+	
+	add		r8,	#1
+	add		y,	#1
+	cmp 	r8, #8
+	blt 	loopBlue
+
+	pop		{r4-r9, pc}
+
 	
 @ Draw Pixel
 @ r0 - x
