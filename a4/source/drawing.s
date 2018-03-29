@@ -22,11 +22,43 @@ loopTitle:
 		cmp 	r4,	#8
 		blt		loopTitle
 			
+		@draw PLAY GAME
+		mov		r7,	#0
+		mov		r4,	#0
+		mov		r5,	#850
+		mov		r6,	#350
+		ldr		r7, =playGame	
+loopPlay:
+		ldrb	r0,	[r7, r4]
+		mov		r1,	r5
+		mov		r2,	r6
+		bl		DrawChar
+		add		r4,	#1
+		add		r5,	#15	
+		cmp 	r4,	#9
+		blt		loopPlay
+		
+		@draw QUIT
+		mov		r7,	#0
+		mov		r4,	#0
+		mov		r5,	#890
+		mov		r6,	#450
+		ldr		r7, =quit	
+loopQuit:
+		ldrb	r0,	[r7, r4]
+		mov		r1,	r5
+		mov		r2,	r6
+		bl		DrawChar
+		add		r4,	#1
+		add		r5,	#15	
+		cmp 	r4,	#4
+		blt		loopQuit
+			
 		@draw creator names
 		mov		r7,	#0
 		mov		r4,	#0
 		mov		r5,	#500
-		mov		r6,	#700
+		mov		r6,	#600
 		ldr		r7, =names
 
 loopStart:
@@ -317,3 +349,9 @@ names:
 
 gameName:
 .asciz	"Arkanoid\n"
+
+playGame:
+.asciz "PLAY GAME\n"
+
+quit:
+.asciz "QUIT\n"
