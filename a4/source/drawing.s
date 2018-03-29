@@ -1,4 +1,5 @@
-
+@ CPSC 359 L01 Assignment 4
+@ Daniel Nwaroh & Issack John & Steve Khanna
 
 @ Code section
 .section .text
@@ -61,9 +62,12 @@ drawLoop1:
 		add	r0,	r0, #1		//Add one to the x-coordinat
 
 		b	drawLoop1
+		
 
 done1:		
 		pop	{r5-r10, lr}
 		mov	pc, lr
+
+		
 
 
