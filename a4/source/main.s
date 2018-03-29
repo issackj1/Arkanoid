@@ -20,81 +20,136 @@ main:
 	@ ask for the frame buffer information
 	ldr		r0, =frameBufferInfo		@frame buffer information structure
 	bl		initFbInfo
-	mov		r9, #675	//y
-	mov		r6, #1080	//x
-	b		array1
-
-
-PrintBackground:
 	
-	mov		r0, r10
-	mov		r1, r11
-	ldr		r7, =imageWidth
-	mov		r3, #64
-	str		r3, [r7]
-	ldr		r8, =imageHeight
-	mov		r3, #32
-	str		r3, [r8]
-	ldr		r2, =background
-	bl		drawImage
+	mov	r11,	#300	//init x 
+	mov	r10,	#100	//init y
+	mov	r9,	#1		//elem num
+	mov	r4,	#21	
+	ldr	r1,	=imageArray
+	ldrb	r2,	[r1]
+
+check:
+	cmp	r2,	#0
+	beq	printBackground
+	cmp	r2, #1
+	beq	printBrick
+	cmp	r2, #2
+	beq	printGrey
+	cmp	r2, #3
+	beq	printGreen
+	cmp	r2, #4
+	beq	printRed
+	cmp	r2, #5
+	beq	printPaddle	
+	b	haltLoop$
+
+printPaddle:
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =yellow
+	bl	drawImage
+	b	adder
+
+
+
+printRed:
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =red
+	bl	drawImage
+	b	adder
+
+printGreen:
+
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =green
+	bl	drawImage
+	b	adder
+
+printGrey:
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =grey
+	bl	drawImage
+	b	adder
+
+
+printBrick:
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =wall
+	bl	drawImage
+	b	adder
 	
 
-	add		r6, #1
-	add		r9, #1	
-	b		loop
-
-array1:
-	ldr		r0, =endArray
-	ldr		r1, =imageArray
-	mov		r6, #1		//counter
-	mov		r5, #21		//col to count
-	mov		r10, #236
-	mov		r11, #100
-	mov		r4, r0
-	mov		r9, r1
-loop:
-	cmp		r9, r4
-	beq		haltLoop$
-	cmp		r6, r5	
-	beq		changeBoth
-
+printBackground:
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	ldr	r2, =background
+	bl	drawImage
+	b	adder
+	
+adder:
+	add	r9, r9, #1
+	b	newCheck
+	
+newCheck:
+	ldr	r0,	=endArray
+	ldr	r1,	=imageArray
+	sub	r8, r9, #1
+	ldrb	r2,	[r1, r8]!
+	cmp	r1,	r0
+	beq	haltLoop$
+	cmp	r9,	r4
+	beq	changeBoth
+	bne	onlyX
 onlyX:
-	add		r10, r10, #64
-	b		PrintBackground
-	
+	add		r11, r11, #64
+	b		check
+
 changeBoth:
-	add		r5, #20
-	add		r11, r11, #31
-	mov		r10, #236
-	b		onlyX		
-
-/*printPaddle:
-	mov		r0, #850
-	mov 	r1, #600
-	ldr		r7, =imageWidth
-	mov		r4, #100
-	str		r4, [r7]
-	ldr		r8, =imageHeight
-	mov		r4, #21
-	str		r4, [r8]
-	ldr		r2, =paddle
-	bl		drawImage
-
-printBall:
-	mov		r0, #890
-	mov 	r1, #580
-	ldr		r7, =imageWidth
-	mov		r4, #20
-	str		r4, [r7]
-	ldr		r8, =imageHeight
-	mov		r4, #20
-	str		r4, [r8]
-	ldr		r2, =ball
-	bl		drawImage
+	add		r4, #20
+	add		r10, r10, #31
+	mov		r11, #236
+	b		onlyX	
 	
-callSNES:
-	bl		SNESmain
-*/
 haltLoop$:
 		b	haltLoop$
 
@@ -129,27 +184,26 @@ imageHeight:
 
 
 imageArray:
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-
+.byte		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+.byte		1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1
+.byte		1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1
+.byte		1,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 
 
 endArray:
