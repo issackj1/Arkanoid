@@ -20,6 +20,11 @@ main:
 	@ ask for the frame buffer information
 	ldr		r0, =frameBufferInfo		@frame buffer information structure
 	bl		initFbInfo
+	
+	//move the paddle
+
+.global next
+next:	
 	mov	r5, #1
 	mov	r11,	#300	//init x 
 	mov	r10,	#100	//init y
@@ -41,8 +46,11 @@ check:
 	beq	setRed
 	
 checkBranch:
+	mov	r11, #876
+	mov	r10, #658
 	cmp	r5, #1
-	beq	initPaddle
+	//beq	initPaddle
+	beq	callSNES
 	bne	haltLoop$
 	
 initPaddle:
@@ -100,7 +108,33 @@ changeBoth:
 	add		r10, r10, #31
 	mov		r11, #236
 	b		onlyX	
+
+callSNES:
+	bl	SNESmain
+
+	mov	r8, r0
 	
+	ldr	r1,	=0xFEFF
+	cmp	r8,	r1
+	beq	setPaddleR
+	
+	ldr	r1,	=0xFDFF
+	cmp	r8,	r1
+	beq	setPaddleL
+	
+	b	initPaddle
+	
+setPaddleR:
+	add	r11,	#100		//horizontal
+	mov	r10,	#658
+	bl	drawPaddle
+	
+setPaddleL:
+	sub	r11,	#100		//horizontal
+	mov	r10,	#658
+	bl	drawPaddle
+	
+
 haltLoop$:
 		b	haltLoop$
 
@@ -157,6 +191,7 @@ imageArray:
 
 endArray:
 .align
+
 
 
 
