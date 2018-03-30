@@ -2,6 +2,43 @@
 @ Code section
 .section .text
 
+
+.global DrawPaddel
+DrawPaddel:
+		push	{r4-r11, lr}
+		
+		mov		r8,	r0
+		ldr		r4,	=gameState
+		mov		r7,	#0
+		
+drawPaddelAgain:		
+		ldrb	r5,	[r4], #1
+		
+		mov		r0,	r5
+		mov		r1,	#20
+		mov		r3,	r8
+		bl		DrawSquare
+		
+		add		r7,	#1
+		cmp		r7,	#3
+		blt		drawPaddelAgain
+		
+		pop	{r4-r11, pc}
+
+.global DrawBall
+DrawBall:
+		push	{r4-r11, lr}
+		ldr		r4,	=gameState
+		mov		r7, #0
+		
+		mov		r8,	r0
+		ldrb	r0,	[r4, #3]
+		ldrb	r1,	[r4, #4]
+		mov		r3,	r8
+		bl		DrawSquare
+		
+		pop	{r4-r11, pc}
+
 .global	DrawBlackBackGround
 DrawBlackBackGround:
 		push	{r4-r11, lr}
@@ -77,8 +114,8 @@ DrawSquare:
 		
 		mov	 	r9,	#32             //32 is the offset
 			
-		mul		r10,r0,r9                              
-		mul 	r11,r1,r9 
+		lsl		r10,r0, #5                              
+		lsl 	r11,r1, #5 
 
 		mov		r4,	r10				//Start X position of your picture
 		mov		r5,	r11
@@ -398,16 +435,20 @@ mainMenu:
 
 .global playGame
 playGame:
-.asciz "PLAY GAME\n"						@size = 9
+.asciz "Play Game\n"						@size = 9
 
 .global quit
 quit:
-.asciz "QUIT\n"								@size = 4
+.asciz "Quit Game\n"								@size = 4
 
 .global playGameSelect
 playGameSelect:
-.asciz	"> PLAY GAME"						@size = 11
+.asciz	"> Play Game"						@size = 11
 
 .global quitSelect
 quitSelect:
-.asciz	"> QUIT"							@size = 6
+.asciz	"> Quit Game"							@size = 6
+
+.global gameOver
+gameOver:
+.asciz "CYA NERD"
