@@ -2,41 +2,88 @@
 @ Code section
 .section .text
 
+.global DrawGrid
+DrawGrid:
+		push 	{r4-r11, lr}
+		mov		r4,	#20
+		mov		r5,	#2
+		ldr		r6,	=imageArray
+		b		loopdrow
+next:
+		mov		r4,	#20	
+		
+loopdrow:
+		mov		r0,	r4
+		mov		r1,	r5		
+		
+		ldrb	r7,	[r6], #1
+		cmp		r7,	#0
+		ldreq	r3,	=backGround
+		
+		cmp		r7,	#1
+		ldreq	r3,	=wall
+		
+		cmp		r7,	#2
+		ldreq	r3,	=red
+		
+		cmp		r7, #3
+		ldreq	r3,	=yellow
+		
+		cmp		r7,	#4
+		ldreq	r3,	=pink
+		
+		cmp		r7,	#5
+		ldreq	r3,	=padel
+		
+		bl		DrawSquare
+		
+		add		r4,	#1
+		cmp		r4,	#40
+		blt		loopdrow
+		add		r5,	#1
+		cmp		r5,	#22
+		blt		next
+		
+		pop	{r4-r11, pc}
+
+
 .globl DrawSquare
 DrawSquare:
-	push		{r4-r11,lr}
-	
-        mov	 r9,	#32                             //32 is the offset
-        
-        mul	r10,r0,r9                              
-        mul 	r11,r1,r9 
+		push		{r4-r11,lr}
+		
+		mov	 	r9,	#32             //32 is the offset
+			
+		mul		r10,r0,r9                              
+		mul 	r11,r1,r9 
 
-	mov	r4,	r10			//Start X position of your picture
-	mov	r5,	r11
-	ldr	r6,	=wall			//Address of the picture
-	mov	r7,	r4
-        add     r7,     #32
-	mov	r8,     r5
-        add     r8,     #32
+		mov		r4,	r10				//Start X position of your picture
+		mov		r5,	r11
+		mov		r6,	r3			//Address of the picture
+		mov		r7,	r4
+		add     r7, #32
+		mov		r8, r5
+		add     r8, #32
 drawPictureLoop:
-	mov	r0,	r4			//passing x for ro which is used by the Draw pixel function 
-	mov	r1,	r5			//passing y for r1 which is used by the Draw pixel formula 
-	
-	ldrh	r2,	[r6],#2			//setting pixel color by loading it from the data section. We load half word
-	bl	DrawPixel
-	add	r4,	#1			//increment x position
+		mov		r0,	r4				//passing x for r0 which is used by the Draw pixel function 
+		mov		r1,	r5				//passing y for r1 which is used by the Draw pixel formula 
+		
+		ldr		r2,	[r6],#4 		//setting pixel color by loading it from the data section. We load half word
+		push	{r3}
+		bl		DrawPixel
+		pop		{r3}
+		add		r4,	#1				//increment x position
 
-	cmp	r4,	r7			//compare with image with
-	blt	drawPictureLoop
+		cmp		r4,	r7				//compare with image with
+		blt		drawPictureLoop
 
-	mov	r4,	r10			//reset x
-	add	r5,	#1			//increment Y
+		mov		r4,	r10				//reset x
+		add		r5,	#1				//increment Y
 
-	cmp	r5,	r8			//compare y with image height
-	blt	drawPictureLoop
-	
-	pop    {r4-r11,lr}
-	mov	pc,	lr			//return
+		cmp		r5,	r8				//compare y with image height
+		blt		drawPictureLoop
+		
+		pop    {r4-r11,lr}
+		mov		pc,	lr				//return
 
 
 /*
@@ -412,7 +459,7 @@ noPixel$:
 
 
 
-/*
+/**
 @ Draw the character to (x,y)
 .global DrawChar
 DrawChar:
@@ -465,7 +512,7 @@ noPixel$:
 		.unreq	mask
 
 		pop		{r4-r9, pc}
-*/
+**/
 	
 @ Draw Pixel
 @ r0 - x
@@ -496,13 +543,6 @@ DrawPixel:
 
 @ Data section
 .section .data
-
-.global wall
-wall:
-		.byte 1,1,1,1
-		.byte 1,1,1,1
-		.byte 1,1,1,1
-		.byte 1,1,1,1
 
 .global gameName
 gameName:

@@ -3,10 +3,10 @@
 
 @ASSIGNMENT CHECK LIST[]
 
-@Main Menu Screen	  	[]5
-@Draw game State 		[]29
-@Draw game menu	  		[]4
-@interact with game	  	[]8
+@Main Menu Screen	  		[]5
+@Draw game State 			[]29
+@Draw game menu	  			[]4
+@interact with game	  		[]8
 @interact with game menu	[]4
 
 
@@ -21,47 +21,43 @@ main:
 		bl		initFbInfo
 		
 		@bl		initGPIO
-		@mov		r0,	#500
-		@mov		r1, #500
-		@bl		DrawSquare
+		bl		DrawGrid
+		
 
 		//Game_Name
+		mov		r0,	#920
+		mov		r1,	#130
+		ldr		r2, =0xFFFF2416			// colour
+		ldr		r3, =gameName
+		bl		Draw_String
 
-	//Game_Name
-	ldr		r0, =0x1F0			// x coordinate
-	ldr		r1, =0x6C			// y coordinate
-	ldr		r2, =0xF860		// colour
-	ldr		r3, =gameName
-	bl		Draw_String
+		//Main_Menu
+		mov		r0,	#910
+		mov		r1,	#250
+		ldr		r2, =0xFFFF2416		
+		ldr		r3, =mainMenu
+		bl		Draw_String
 
-	//Creator_Names
-	ldr		r0, =0x137			// x coordinate
-	ldr		r1, =0x30			// y coordinate
-	ldr		r2, =0xF860	
-	ldr		r3, =names
-	bl		Draw_String
+		//Play_Game
+		mov		r0,	#900
+		mov		r1,	#350
+		ldr		r2, =0xFFFF2416	
+		ldr		r3, =playGameSelect
+		bl		Draw_String
 
-	//Main_Menu
-	ldr		r0, =0x196			// x coordinate
-	ldr		r1, =0x4E			// y coordinate
-	ldr		r2, =0xF860	
-	ldr		r3, =mainMenu
-	bl		Draw_String
-
-	//Start_Game
-	ldr		r0, =0x1DC			// x coordinate
-	ldr		r1, =0x180			// y coordinate
-	ldr		r2, =0xF860
-	ldr		r3, =playGameSelect
-	bl		Draw_String
-
-	//Quit_Game
-			// prints "QUIT GAME"
-	ldr		r0, =0x1E1			// x coordinate
-	ldr		r1, =0x19E			// y coordinate
-	ldr		r2, =0xF860
-	ldr		r3, =quit
-	bl		Draw_String
+		@prints "QUIT"
+		mov		r0,	#940
+		mov		r1,	#450
+		ldr		r2, =0xFFFF2416	
+		ldr		r3, =quit
+		bl		Draw_String
+		
+		//Creator_Names
+		mov		r0,	#700
+		mov		r1,	#550
+		ldr		r2, =0xFFFF2416		
+		ldr		r3, =names
+		bl		Draw_String
 	
 	haltLoop$:
 
@@ -93,26 +89,26 @@ imageHeight:
 
 .global imageArray
 imageArray:
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,1
+.byte		1,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,1
+.byte		1,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 
 endArray:
 .align
