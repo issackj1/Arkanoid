@@ -2,6 +2,30 @@
 @ Code section
 .section .text
 
+.global	DrawBlackBackGround
+DrawBlackBackGround:
+		push	{r4-r11, lr}
+		mov		r4,	#20
+		mov		r5,	#2
+		b		loopblackrow
+nextb:
+		mov		r4,	#20	
+		
+loopblackrow:
+		mov		r0,	r4
+		mov		r1,	r5		
+		
+		ldr		r3,	=backGround
+		bl		DrawSquare
+		
+		add		r4,	#1
+		cmp		r4,	#40
+		blt		loopblackrow
+		add		r5,	#1
+		cmp		r5,	#22
+		blt		nextb
+		pop		{r4-r11, pc}
+
 .global DrawGrid
 DrawGrid:
 		push 	{r4-r11, lr}
@@ -58,7 +82,7 @@ DrawSquare:
 
 		mov		r4,	r10				//Start X position of your picture
 		mov		r5,	r11
-		mov		r6,	r3			//Address of the picture
+		mov		r6,	r3				//Address of the picture
 		mov		r7,	r4
 		add     r7, #32
 		mov		r8, r5
@@ -159,190 +183,6 @@ loopStart:
 		
 		pop		{r4-r8, pc}
 */
-	
-.global drawLeftBorder
-drawLeftBorder:
-		push	{r4-r9, lr}
-		x	.req	r4
-		y	.req	r5
-			
-		mov		x,	#494
-		mov		y,	#502
-		
-		ldr		r6,	=leftBorder
-		mov		r7,	#0
-		mov		r8,	#0
-	
-loop:
-		mov		r0,	x
-		mov		r1,	y
-		ldr		r2,	[r6]
-		bl		DrawPixel
-		
-		add		x,	#1
-		add		r6,	#4
-		add		r7,	#1
-		
-		cmp		r7,	#6
-		blt		loop
-		mov		x,	#494
-		mov		r7, #0
-		
-		add		r8,	#1
-		add		y,	#1
-		cmp 	r8, #230
-		blt 	loop
-
-		pop		{r4-r9, pc}
-
-
-.global drawRightBorder
-drawRightBorder:
-		push	{r4-r9, lr}
-		x	.req	r4
-		y	.req	r5
-			
-		mov		x,	#708
-		mov		y,	#502
-		
-		ldr		r6,	=rightBorder
-		mov		r7,	#0
-		mov		r8,	#0
-	
-loopr:
-		mov		r0,	x
-		mov		r1,	y
-		ldr		r2,	[r6]
-		bl		DrawPixel
-		
-		add		x,	#1
-		add		r6,	#4
-		add		r7,	#1
-		
-		cmp		r7,	#6
-		blt		loopr
-		mov		x,	#708
-		mov		r7, #0
-		
-		add		r8,	#1
-		add		y,	#1
-		cmp 	r8, #230
-		blt 	loopr
-
-		pop		{r4-r9, pc}
-
-
-.global drawTopBorder
-drawTopBorder:
-		push	{r4-r9, lr}
-		x	.req	r4
-		y	.req	r5
-			
-		mov		x,	#494
-		mov		y,	#495
-		
-		ldr		r6,	=topBorder
-		mov		r7,	#0
-		mov		r8,	#0
-		
-loopt:
-		mov		r0,	x
-		mov		r1,	y
-		ldr		r2,	[r6]
-		bl		DrawPixel
-		
-		add		x,	#1
-		add		r6,	#4
-		add		r7,	#1
-		
-		cmp		r7,	#220
-		blt		loopt
-		mov		x,	#494
-		mov		r7, #0
-		
-		add		r8,	#1
-		add		y,	#1
-		cmp 	r8, #7
-		blt 	loopt
-			
-		pop		{r4-r9, pc}
-
-.global drawBackGround
-drawBackGround:
-		push	{r4-r10, lr}
-		
-		mov	r10, r0
-		mov	r5,	#0
-		mov	r6,	#0
-		ldr	r7, =imageWidth
-		ldr	r7, [r7]
-		ldr	r8, =imageHeight
-		ldr	r8, [r8]
-		
-		mov	r9,	r2
-		
-outerLoop:
-
-		mov	r5, #0			//reset pixels drawn x
-		mov	r0, r10		//Re-initialize x -coordinate
-		add	r1, r1,	#1		//Add one to y coordinate
-		add	r6, r6,	#1		//Add one to pixels drawn y
-
-		cmp	r6, r8			//Pixels drawn y < y bound?
-		bge	done1		
-	
-drawLoop1:
-		cmp	r5, r7			//Pixels drawn < Length?
-		bge	outerLoop		//If yes, branch to done
-
-		ldr	r2, [r9], #4		
-
-		push	{r0, r1, r2}
-		bl	DrawPixel
-		pop		{r0, r1, r2}			
-		
-		add	r5,	r5, #1		//Add one to pixels drawn	
-		add	r0,	r0, #1		//Add one to the x-coordinat
-
-		b	drawLoop1
-done1:
-		pop		{r4-r10, pc}
-	
-	
-.global drawBlueBlock	
-drawBlueBlock:
-		push	{r4-r9, lr}
-		x	.req	r4
-		y	.req	r5
-			
-		mov		x,	r0
-		mov		y,	r1
-		
-		ldr		r6,	=blueBlock
-		mov		r7,	#0
-		mov		r8,	#0
-	
-loopBlue:
-		mov		r0,	x
-		mov		r1,	y
-		ldr		r2,	[r6]
-		bl		DrawPixel
-	
-		add		x,	#1
-		add		r6,	#4
-		add		r7,	#1
-		
-		cmp		r7,	#16
-		blt		loopBlue
-		mov		x,	#500
-		mov		r7, #0
-		
-		add		r8,	#1
-		add		y,	#1
-		cmp 	r8, #8
-		blt 	loopBlue
-
-		pop		{r4-r9, pc}
 
 //Draw_String
 //Args: R0 = x, R1 = y, R2 = Colour, R3 = address of string

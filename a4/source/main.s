@@ -19,45 +19,40 @@ main:
 		@ ask for the frame buffer information
 		ldr		r0, =frameBufferInfo		@frame buffer information structure
 		bl		initFbInfo
+		bl		initGPIO
 		
-		@bl		initGPIO
+		b		startState
+		
+GameLoop$:		
+		
+startState:
+		bl		DrawMenuStartSelected
+		bl		checkButtons	
+		mov		r8,	r0
+		ldr		r1,	=0xFBFF
+		cmp		r8,	r1
+		beq		QuitState
+		
+		ldr		r1,	=0xFF7F
+		cmp		r8,	r1
+		beq		playState
+
+		b		startState
+		
+		
+QuitState:
+		bl		DrawMenuQuitSelected
+		
+		bl		checkButtons
+		mov		r8,	r0
+		ldr		r1,	=0xF7FF
+		cmp		r8,	r1
+		beq		startState
+		
+		b		QuitState
+
+playState:
 		bl		DrawGrid
-		
-
-		//Game_Name
-		mov		r0,	#920
-		mov		r1,	#130
-		ldr		r2, =0xFFFF2416			// colour
-		ldr		r3, =gameName
-		bl		Draw_String
-
-		//Main_Menu
-		mov		r0,	#910
-		mov		r1,	#250
-		ldr		r2, =0xFFFF2416		
-		ldr		r3, =mainMenu
-		bl		Draw_String
-
-		//Play_Game
-		mov		r0,	#900
-		mov		r1,	#350
-		ldr		r2, =0xFFFF2416	
-		ldr		r3, =playGameSelect
-		bl		Draw_String
-
-		@prints "QUIT"
-		mov		r0,	#940
-		mov		r1,	#450
-		ldr		r2, =0xFFFF2416	
-		ldr		r3, =quit
-		bl		Draw_String
-		
-		//Creator_Names
-		mov		r0,	#700
-		mov		r1,	#550
-		ldr		r2, =0xFFFF2416		
-		ldr		r3, =names
-		bl		Draw_String
 	
 	haltLoop$:
 
