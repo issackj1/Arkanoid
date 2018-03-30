@@ -10,104 +10,63 @@
 @interact with game menu	[]4
 
 
-
 @ Code section
 .section .text
 
 
 .global main
 main:
-	@ ask for the frame buffer information
-	ldr		r0, =frameBufferInfo		@frame buffer information structure
-	bl		initFbInfo
-	bl	SNESmain
-one:
-	mov	r8, r0
-.global next
-next:	
-	mov	r5, #1
-	mov	r11,	#300	//init x 
-	mov	r10,	#100	//init y
-	mov	r9,	#1		//elem num
-	mov	r4,	#21	
-	ldr	r1,	=imageArray
-	ldrb	r2,	[r1]
+		@ ask for the frame buffer information
+		ldr		r0, =frameBufferInfo		@frame buffer information structure
+		bl		initFbInfo
+		
+		@bl		initGPIO
+		@mov		r0,	#500
+		@mov		r1, #500
+		@bl		DrawSquare
 
-check:
-	cmp	r2,	#0
-	beq	setBackground
-	cmp	r2, #1
-	beq	setBrick
-	cmp	r2, #2
-	beq	setGrey
-	cmp	r2, #3
-	beq	setGreen
-	cmp	r2, #4
-	beq	setRed
+		//Game_Name
+
+	//Game_Name
+	ldr		r0, =0x1F0			// x coordinate
+	ldr		r1, =0x6C			// y coordinate
+	ldr		r2, =0xF860		// colour
+	ldr		r3, =gameName
+	bl		Draw_String
+
+	//Creator_Names
+	ldr		r0, =0x137			// x coordinate
+	ldr		r1, =0x30			// y coordinate
+	ldr		r2, =0xF860	
+	ldr		r3, =names
+	bl		Draw_String
+
+	//Main_Menu
+	ldr		r0, =0x196			// x coordinate
+	ldr		r1, =0x4E			// y coordinate
+	ldr		r2, =0xF860	
+	ldr		r3, =mainMenu
+	bl		Draw_String
+
+	//Start_Game
+	ldr		r0, =0x1DC			// x coordinate
+	ldr		r1, =0x180			// y coordinate
+	ldr		r2, =0xF860
+	ldr		r3, =playGameSelect
+	bl		Draw_String
+
+	//Quit_Game
+			// prints "QUIT GAME"
+	ldr		r0, =0x1E1			// x coordinate
+	ldr		r1, =0x19E			// y coordinate
+	ldr		r2, =0xF860
+	ldr		r3, =quit
+	bl		Draw_String
 	
-checkBranch:
-	cmp	r5, #1
-	beq	initPaddle
-	bne	haltLoop$
-	
-initPaddle:
-	add	r5, #1
-	mov	r11, #876
-	mov	r10, #658
-	bl	drawPaddle
-	b	haltLoop$
-	
-setBackground:
-	ldr	r2, =background
-	bl	draw
-	b	adder
+	haltLoop$:
 
-setBrick:
-	ldr	r2, =wall
-	bl	draw
-	b	adder
-
-setGreen:
-	ldr	r2, =green
-	bl	draw
-	b	adder
-
-setGrey:
-	ldr	r2, =grey
-	bl	draw
-	b	adder
-
-setRed:
-	ldr	r2, =red
-	bl	draw
-	b	adder
-
-adder:
-	add	r9, r9, #1
-	b	newCheck
-	
-newCheck:
-	ldr	r0,	=endArray
-	ldr	r1,	=imageArray
-	sub	r8, r9, #1
-	ldrb	r2,	[r1, r8]!
-	cmp	r1,	r0
-	beq	checkBranch
-	cmp	r9,	r4
-	beq	changeBoth
-	bne	onlyX
-onlyX:
-	add		r11, r11, #64
-	b		check
-
-changeBoth:
-	add		r4, #20
-	add		r10, r10, #31
-	mov		r11, #236
-	b		onlyX	
-	
-haltLoop$:
 		b	haltLoop$
+			
 
 @ Data section
 .section .data
@@ -119,49 +78,45 @@ frameBufferInfo:
 .int	0
 .int	0
 
-.global	FrameBuffer
-FrameBuffer:
-.int	0
-.int	0
-.int	0
-
 @For drawing ASCII TEXT
+.global font
 .align 4
 font:	.incbin "font.bin"
 
 .global imageWidth
 imageWidth:
 .int	0
-.global	imageHeight
+
+.global imageHeight
 imageHeight:
 .int	0
 
-
+.global imageArray
 imageArray:
-.byte		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-.byte		1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1
-.byte		1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1
-.byte		1,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 endArray:
 .align
+
 
 
 
