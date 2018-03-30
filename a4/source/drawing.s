@@ -4,7 +4,39 @@
 @ Code section
 .section .text
 
-		
+.global drawPaddle
+drawPaddle:
+	push {lr}
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #128
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #16
+	str	r6, [r8]
+	ldr	r2, =yellow
+	bl	drawImage
+	pop {lr}
+	mov	pc, lr
+	
+
+.global draw
+draw:
+	push {lr}
+	mov	r0,	r11
+	mov	r1,	r10
+	ldr	r8, =imageWidth
+	mov	r7, #64
+	str	r7, [r8]
+	ldr	r8, =imageHeight
+	mov	r6, #32
+	str	r6, [r8]
+	bl	drawImage
+	pop {lr}
+	mov	pc, lr
+	
+	
 @ Draw Pixel
 @ r0 - x
 @ r1 - y

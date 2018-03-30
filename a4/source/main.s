@@ -20,7 +20,7 @@ main:
 	@ ask for the frame buffer information
 	ldr		r0, =frameBufferInfo		@frame buffer information structure
 	bl		initFbInfo
-	
+	mov	r5, #1
 	mov	r11,	#300	//init x 
 	mov	r10,	#100	//init y
 	mov	r9,	#1		//elem num
@@ -30,102 +30,53 @@ main:
 
 check:
 	cmp	r2,	#0
-	beq	printBackground
+	beq	setBackground
 	cmp	r2, #1
-	beq	printBrick
+	beq	setBrick
 	cmp	r2, #2
-	beq	printGrey
+	beq	setGrey
 	cmp	r2, #3
-	beq	printGreen
+	beq	setGreen
 	cmp	r2, #4
-	beq	printRed
-	cmp	r2, #5
-	beq	printPaddle	
+	beq	setRed
+	
+checkBranch:
+	cmp	r5, #1
+	beq	initPaddle
+	bne	haltLoop$
+	
+initPaddle:
+	add	r5, #1
+	mov	r11, #876
+	mov	r10, #658
+	bl	drawPaddle
 	b	haltLoop$
-
-printPaddle:
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
-	ldr	r2, =yellow
-	bl	drawImage
-	b	adder
-
-
-
-printRed:
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
-	ldr	r2, =red
-	bl	drawImage
-	b	adder
-
-printGreen:
-
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
-	ldr	r2, =green
-	bl	drawImage
-	b	adder
-
-printGrey:
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
-	ldr	r2, =grey
-	bl	drawImage
-	b	adder
-
-
-printBrick:
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
-	ldr	r2, =wall
-	bl	drawImage
-	b	adder
 	
-
-printBackground:
-	mov	r0,	r11
-	mov	r1,	r10
-	ldr	r8, =imageWidth
-	mov	r7, #64
-	str	r7, [r8]
-	ldr	r8, =imageHeight
-	mov	r6, #32
-	str	r6, [r8]
+setBackground:
 	ldr	r2, =background
-	bl	drawImage
+	bl	draw
 	b	adder
-	
+
+setBrick:
+	ldr	r2, =wall
+	bl	draw
+	b	adder
+
+setGreen:
+	ldr	r2, =green
+	bl	draw
+	b	adder
+
+setGrey:
+	ldr	r2, =grey
+	bl	draw
+	b	adder
+
+setRed:
+	ldr	r2, =red
+	bl	draw
+	b	adder
+
 adder:
 	add	r9, r9, #1
 	b	newCheck
@@ -136,7 +87,7 @@ newCheck:
 	sub	r8, r9, #1
 	ldrb	r2,	[r1, r8]!
 	cmp	r1,	r0
-	beq	haltLoop$
+	beq	checkBranch
 	cmp	r9,	r4
 	beq	changeBoth
 	bne	onlyX
@@ -152,8 +103,6 @@ changeBoth:
 	
 haltLoop$:
 		b	haltLoop$
-
-
 
 @ Data section
 .section .data
@@ -202,7 +151,7 @@ imageArray:
 .byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 .byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 .byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-.byte		1,0,0,0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0,1
+.byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 .byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 
 
