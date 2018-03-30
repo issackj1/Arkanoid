@@ -10,7 +10,9 @@
 .global SNESmain
 .global	getGpioPtr
 
+
 SNESmain:
+		push	{r1, lr}
 		ldr		r0,	=names										@Load creator names
 		bl		printf											@Print Creator names
 		mov		r10,	#0xffff									@Checker reg: meaning nothing is being pushed
@@ -47,7 +49,9 @@ delay:
 		beq		delay						
 		cmp		r0, r10											@Makes sure a button was pressed
 		beq		delay						
-		bl		checkMsg										@If button was pressed, checks which one 
+		bl		checkMsg
+		cmp		r0, r6
+		beq		stop										@If button was pressed, checks which one 
 		b		request											@Loops back for a new prompt
 @Checks which button was pressed		
 checkMsg:
@@ -102,10 +106,11 @@ checkMsg:
 		teq		r6,	r1
 		beq		printRb
 		
-		pop		{r8, pc}	
 		
 @Inf loop to end program
-stop:	b		stop
+stop:	
+		mov		r0,	r6
+		mov		pc, lr
 
 @the subroutine initializes a GPIO line,
 @the line number and function code must be passed
@@ -253,7 +258,9 @@ printRb:
 printEnd:
 		ldr		r0,	=end
 		bl		printf
-		b		stop
+		mov		r0, r6
+		pop		{r1, pc}
+
 
 @ Data section
 .section    .data

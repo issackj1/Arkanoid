@@ -20,6 +20,11 @@ main:
 	@ ask for the frame buffer information
 	ldr		r0, =frameBufferInfo		@frame buffer information structure
 	bl		initFbInfo
+	bl	SNESmain
+one:
+	mov	r8, r0
+.global next
+next:	
 	mov	r5, #1
 	mov	r11,	#300	//init x 
 	mov	r10,	#100	//init y
