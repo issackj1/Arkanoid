@@ -26,45 +26,40 @@ main:
 GameLoop$:	
 		
 		ldr		r4,	=gameState
-		ldrb	r5,	[r4, #4]			@ball y
-		ldrb	r6,	[r4, #6]			@ball veloccity y
-		sub		r5,	r6					@apply
-		strb	r5,	[r4, #4]			@store
+		ldrb	r5,	[r4, #4]			@ ball y
+		ldrb	r6,	[r4, #6]			@ ball velocity y
+
+		mov		r0,	r5
+		mov		r1,	r6
+		bl		checkCollision
+
+		ldrb	r6,	[r4, #6]			@ ball velocity y
 		
-		b		DrawGameState
+		add		r5,	r6					@ apply change
+		strb	r5,	[r4, #4]			@ store
+		
+		b		DrawGameState			
 		
 GameLoopTop:		
-		bl		checkButtons		@wait for input 
+		bl		checkButtons			@wait for input 
 		mov		r8, r0
 		
-		ldr		r0,	=backGround		@clear paddel
+		ldr		r0,	=backGround			@clear paddel
 		bl		DrawPaddel
 		
-		ldr		r0,	=backGround		@clear ball
+		ldr		r0,	=backGround			@clear ball
 		bl		DrawBall
 		
 		@go see what was pressed
 		
-		ldr		r1,	=0xFDFF			@left pressed
+		ldr		r1,	=0xFDFF				@left pressed
 		cmp		r8,	r1
-		beq		mvl
+		bleq	moveLeft
 		
 		ldr		r1,	=0xFEFF	
-		cmp		r8,	r1				@right pressed
-		beq		mvr
+		cmp		r8,	r1					@right pressed
+		bleq	moveRight
 		
-		@bl		boundsCheck
-		
-		@check for colision
-		
-		@increment score in colision
-		
-		b		GameLoop$
-mvl:
-		bl		moveLeft
-		b		GameLoop$
-mvr:
-		bl		moveRight
 		b		GameLoop$
 		
 MainMenuStart:
@@ -82,7 +77,16 @@ MainMenuStart:
 		
 startGame:
 		bl		DrawGrid
-		b		GameLoop$
+		ldr		r0,	=padel
+		bl		DrawPaddel
+		ldr		r0,	=ball
+		bl		DrawBall
+startGameTop:
+		bl		checkButtons
+		ldr		r1,	=0xFF7F
+		cmp		r8,	r1
+		beq		GameLoop$
+		b		startGameTop
 		
 		
 MainMenuQuit:
@@ -136,15 +140,21 @@ QuitState:
 @ 7 = score
 @ 8 = Level
 @ 9 = Win / Lose Flag
+@ 10 = minimum x
+@ 11 = maximum x
+@ 12 = minimum y
+@ 13 = maximum y
 
 .global gameState
 gameState:
 .byte		28,29,30		@paddel x coord
 .byte		29, 19			@Ball x Coord, y coord,
-.byte		0, 1			@Velocity x, Velocity y
+.byte		1, -1			@Velocity x, Velocity y
 .byte		0				@score
 .byte		0				@Level
 .byte		0				@ Win / Lose
+.byte		20,	40			@mix x, max x
+.byte		2,	22			@min y, max y
 
 
 .align

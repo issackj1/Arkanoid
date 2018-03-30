@@ -51,6 +51,23 @@ dontMoveRight:
 .global checkCollision
 checkCollision:
 		push	{r4-r11, lr}
+
+		ldr		r7,	=gameState
+		@ldr	r8,	=imageArray
+		
+		mov		r4,	r0			#y
+		mov		r5,	r1			#velocity y
+
+		@ldrb	r9,	[r8, r4]
+
+		add		r6,	r4,	r5
+		cmp		r6,	#7
+		bgt		noHit
+		mov		r1,	#1
+
+		strb	r1,	[r4, #6]
+		@increment score
+noHit:
 		
 		pop		{r4-r11, pc}
 		
