@@ -26,13 +26,13 @@ main:
 GameLoop$:	
 		
 		ldr		r4,	=gameState
-		ldrb	r5,	[r4, #4]			@ ball y
-		ldrb	r6,	[r4, #6]			@ ball velocity y
+		
+		ldr		r0,	=backGround			@clear ball
+		bl		DrawBall
 
-		mov		r0,	r5
-		mov		r1,	r6
 		bl		checkCollision
 
+		ldrb	r5,	[r4, #4]
 		ldrb	r6,	[r4, #6]			@ ball velocity y
 		
 		add		r5,	r6					@ apply change
@@ -64,6 +64,8 @@ GameLoopTop:
 		
 MainMenuStart:
 		bl		DrawMenuStartSelected
+
+MainMenuTop:
 		bl		checkButtons	
 		mov		r8,	r0
 		ldr		r1,	=0xFBFF
@@ -73,21 +75,8 @@ MainMenuStart:
 		ldr		r1,	=0xFF7F
 		cmp		r8,	r1
 		beq		startGame
-		b		MainMenuStart
 		
-startGame:
-		bl		DrawGrid
-		ldr		r0,	=padel
-		bl		DrawPaddel
-		ldr		r0,	=ball
-		bl		DrawBall
-startGameTop:
-		bl		checkButtons
-		ldr		r1,	=0xFF7F
-		cmp		r8,	r1
-		beq		GameLoop$
-		b		startGameTop
-		
+		b		MainMenuTop
 		
 MainMenuQuit:
 		bl		DrawMenuQuitSelected
@@ -103,11 +92,25 @@ MainMenuQuit:
 		beq		QuitState
 		
 		b		MainMenuQuit
+		
+startGame:
+		bl		DrawGrid
+		ldr		r0,	=padel
+		bl		DrawPaddel
+		ldr		r0,	=ball
+		bl		DrawBall
+startGameTop:
+		bl		checkButtons
+		ldr		r1,	=0xFF7F
+		cmp		r8,	r1
+		beq		GameLoop$
+		b		startGameTop
 
 DrawGameState:
 		
 		ldr		r0,	=padel
 		bl		DrawPaddel
+		
 		ldr		r0,	=ball
 		bl		DrawBall
 		
@@ -147,14 +150,14 @@ QuitState:
 
 .global gameState
 gameState:
-.byte		28,29,30		@paddel x coord
-.byte		29, 19			@Ball x Coord, y coord,
-.byte		1, -1			@Velocity x, Velocity y
-.byte		0				@score
-.byte		0				@Level
+.byte		28,29,30		@ paddel x coord
+.byte		29, 19			@ Ball x Coord, y coord,
+.byte		1, -1			@ Velocity x, Velocity y
+.byte		0				@ score
+.byte		0				@ Level
 .byte		0				@ Win / Lose
-.byte		20,	40			@mix x, max x
-.byte		2,	22			@min y, max y
+.byte		20,	40			@ mix x, max x
+.byte		2,	22			@ min y, max y
 
 
 .align
