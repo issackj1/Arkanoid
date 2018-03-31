@@ -53,24 +53,33 @@ checkCollision:
 		push	{r4-r11, lr}
 
 		ldr		r4,	=gameState
+		ldr		r10, =imageArray
 		
 		ldrb	r5,	[r4, #4]			@ ball y
-		ldrb	r6,	[r4, #6]			@ ball velocity y
-		
-		@ldr	r8,	=imageArray
-		@ldrb	r9,	[r8, r4]
+		ldr		r6,	[r4, #9]			@ ball velocity y
 
 		add		r7,	r5,	r6
-		mov		r9, #262		
+		mov		r9, #7	
 		cmp		r7,	r9
-		bgt		noHit
-
+		beq		hitCeil
 		
-		mov		r1,	#1
-		strb	r1,	[r4, #6]
+		mov		r9, #20	
+		cmp		r7,	r9
+		beq		hitPaddel	
 		@increment score
+		b		done
 		
-noHit:
+hitCeil:
+		mov		r1,	#1
+		str		r1,	[r4, #9]
+		b		done
+		
+hitPaddel:
+		mov		r1,	#-1
+		str		r1,	[r4, #9]
+		b		done
+		
+done:
 		
 		pop		{r4-r11, pc}
 		

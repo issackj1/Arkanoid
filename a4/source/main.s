@@ -33,10 +33,16 @@ GameLoop$:
 		bl		checkCollision
 
 		ldrb	r5,	[r4, #4]
-		ldrb	r6,	[r4, #6]			@ ball velocity y
+		ldr 	r6,	[r4, #9]			@ ball velocity y
 		
 		add		r5,	r6					@ apply change
 		strb	r5,	[r4, #4]			@ store
+		
+		ldrb	r5,	[r4, #3]
+		ldr 	r6,	[r4, #5]			@ ball velocity x
+		
+		add		r5,	r6					@ apply change
+		strb	r5,	[r4, #3]			@ store
 		
 		b		DrawGameState			
 		
@@ -139,20 +145,21 @@ QuitState:
 @ 3 = ball x
 @ 4 = ball y
 @ 5 = velocity x
-@ 6 = velocity y
-@ 7 = score
-@ 8 = Level
-@ 9 = Win / Lose Flag
-@ 10 = minimum x
-@ 11 = maximum x
-@ 12 = minimum y
-@ 13 = maximum y
+@ 9 = velocity y
+@ 12 = score
+@ 13 = Level
+@ 14 = Win / Lose Flag
+@ 15 = minimum x
+@ 16 = maximum x
+@ 17 = minimum y
+@ 18 = maximum y
 
 .global gameState
 gameState:
 .byte		28,29,30		@ paddel x coord
 .byte		29, 19			@ Ball x Coord, y coord,
-.byte		1, -1			@ Velocity x, Velocity y
+.int		1 				@ Velocity x
+.int		-1				@ Velocity y
 .byte		0				@ score
 .byte		0				@ Level
 .byte		0				@ Win / Lose

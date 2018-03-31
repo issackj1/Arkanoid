@@ -285,7 +285,6 @@ initGPIO:
 .global checkButtons
 checkButtons:
 		push	{r4-r11, lr}
-		ldr		r10, =0xFFFF
 delayy:	
 		bl		Read_SNES										@Calls the function
 		mov		r7,	r0											@Copy of returned val from func
@@ -294,9 +293,6 @@ delayy:
 		bl		Read_SNES
 		cmp		r7, r0											@Checks if two buttons are pressed simulataneously
 		bne		delayy						
-		cmp		r0, r10											@Makes sure a button was pressed
-		beq		delayy
-		mov		r7,	r0	
 								
 checkdone:	
 		mov		r0,	r7
