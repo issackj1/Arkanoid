@@ -62,7 +62,7 @@ checkCollision:
 
 		mov		r9, #2	
 		cmp		r7,	r9
-		beq		hitCeil
+		ble		hitCeil
 
 		@needs to be IMPLEMENTED PROPERLY
 		mov		r9, #20	
@@ -74,13 +74,14 @@ checkCollision:
 checkX:
 
 		ldrb	r5,	[r4, #3]			@ ball x
-		ldr		r6,	[r4, #12]			@ ball velocity x
+		ldr		r6,	[r4, #5]			@ ball velocity x
+		add		r7,	r5,	r6
 		
 		mov		r9,	#20
 		cmp		r7,	r9
 		beq		hitLeftWall
 
-		mov		r9,	#40
+		mov		r9,	#39
 		cmp		r7,	r9
 		beq		hitRightWall
 		@increment score
@@ -98,16 +99,16 @@ hitPaddel:
 
 hitLeftWall:
 		mov		r1,	#1
-		str		r1,	[r4, #12]
+		str		r1,	[r4, #5]
 		b		done
 
-hitRightWalls:
+hitRightWall:
 		mov		r1,	#-1
-		str		r1,	[r4, #12]
+		str		r1,	[r4, #5]
 		b		done
 		
 done:
-		@bl		checkHitBlock
+		bl		checkHitBlock
 		
 		pop		{r4-r11, pc}
 
@@ -132,19 +133,19 @@ checkHitBlock:
 		add		r9,	r6, r7			@ calculated coordinate
 		sub		r9,	r9,	#2
 
-		mov		r6, #20
-		mul		r6,	r6,	r8
-		mul		r7, r6, r9
+		mov		r7, #20
+		mul		r7,	r8
+		mul		r7, r9
 		
-		ldr		r8,	[r5, r7]
+		ldrb	r8,	[r5, r7]
 		cmp		r8, #2
 		beq		hitRed
 
-		ldr		r8,	[r5, r7]
+		ldrb	r8,	[r5, r7]
 		cmp		r8, #3
 		beq		hitYellow
 
-		ldr		r8,	[r5, r7]
+		ldrb	r8,	[r5, r7]
 		cmp		r8, #3
 		beq		hitPink
 
@@ -184,7 +185,7 @@ hitPink:
 		@mov		r9,	#-1
 		@str		r9, [r4, #5]
 
-doneCheckHit			
+doneCheckHit:			
 		
 		pop		{r4-r11, pc}
 
