@@ -3,6 +3,8 @@
 .section .text
 
 
+
+@ Draws the paddle on the screen
 .global DrawPaddel
 DrawPaddel:
 		push	{r4-r11, lr}
@@ -25,6 +27,7 @@ drawPaddelAgain:
 		
 		pop	{r4-r11, pc}
 
+@ Draws the ball on the screen
 .global DrawBall
 DrawBall:
 		push	{r4-r11, lr}
@@ -39,6 +42,7 @@ DrawBall:
 		
 		pop	{r4-r11, pc}
 
+@ Draws the black background on the screen, floor tiles
 .global	DrawBlackBackGround
 DrawBlackBackGround:
 		push	{r4-r11, lr}
@@ -63,6 +67,7 @@ loopblackrow:
 		blt		nextb
 		pop		{r4-r11, pc}
 
+Draws the grid on the screen, blocks and wall
 .global DrawGrid
 DrawGrid:
 		push 	{r4-r11, lr}
@@ -107,7 +112,8 @@ loopdrow:
 		
 		pop	{r4-r11, pc}
 
-
+@ Draw a sqaure on the screen
+@ Takes in the address of the pciture in r3
 .globl DrawSquare
 DrawSquare:
 		push		{r4-r11,lr}
@@ -147,6 +153,8 @@ drawPictureLoop:
 		mov		pc,	lr				//return
 
 
+
+		@DEPRECATED
 /*
 .global drawStart
 drawStart:
@@ -221,45 +229,45 @@ loopStart:
 		pop		{r4-r8, pc}
 */
 
-//Draw_String
-//Args: R0 = x, R1 = y, R2 = Colour, R3 = address of string
-//Return: None
-//This function takes in the address of a string in .asciz form and will print it out
-//to the screen. It first loads the individual value and will then call the Draw_Char function.
-//The function will loop until the /0 character is encountered.
+
+@ Draws a string at the given x and y
+@ r0 = x
+@ r1 = y
+@ r2 = color
+@ r3 = adress for the string
 .globl Draw_String
 Draw_String:
-	push 	{r4-r10, lr}	//*******do we push before or after .req
+	push 	{r4-r10, lr}	
 
 	senAdr	.req	r4
-	px	.req	r5
-	py	.req	r6
+	px		.req	r5
+	py		.req	r6
 	colour	.req	r7
 
 
-	mov	px, r0
-	mov	py, r1
-	mov	colour, r2
-	mov	senAdr, r3
+	mov		px, r0
+	mov		py, r1
+	mov		colour, r2
+	mov		senAdr, r3
 
-	mov	r8, #0	//index = 0
+	mov		r8, #0	//index = 0
 
 	ldrb	r9, [senAdr]
 
 Draw_String_Loop:
-	mov	r0, px
-	mov	r1, py
-	mov	r2, colour
-	mov	r3, r9
-	bl	Draw_Char
+	mov		r0, px
+	mov		r1, py
+	mov		r2, colour
+	mov		r3, r9
+	bl		Draw_Char
 
-	add	r8, #1			//increment index
-	add	px, #10			//*******increment spacing for letters*******CHANGE SPACING HERE
+	add		r8, #1			//increment index
+	add		px, #10			//*******increment spacing for letters*******CHANGE SPACING HERE
 
 	ldrb	r9, [senAdr, r8] 	//load next letter in string
 	
-	cmp	r9, #0			//compare to /0
-	bne	Draw_String_Loop
+	cmp		r9, #0			//compare to /0
+	bne		Draw_String_Loop
 	
 Draw_String_Loop_Done:
 	.unreq	senAdr
@@ -270,57 +278,53 @@ Draw_String_Loop_Done:
 	pop 	{r4-r10, lr}
 	mov	pc, lr
 
-//Draw_Char
-//Args: R0 = x, R1 = y, R2 = Colour, R3 = Character
-//Return: None
-//This function is a more general for of DrawCharB and allows for printing at a
-//user specified (x,y) and a different Character
+@ Draw the character to (x,y)
 .globl Draw_Char
 Draw_Char:
-	push		{r4-r10, lr}
+	push	{r4-r10, lr}
 
-	chAdr		.req	r4
-	px			.req	r5
-	py			.req	r6
-	row			.req	r7
-	mask		.req	r8
-	colour		.req	r9
-	pxINIT		.req	r10
+	chAdr	.req	r4
+	px		.req	r5
+	py		.req	r6
+	row		.req	r7
+	mask	.req	r8
+	colour	.req	r9
+	pxINIT	.req	r10
 
-	ldr			chAdr, 	=font		// load the address of the font map
-	add			chAdr, 	r3, lsl #4	// char address = font base + (char * 16)
+	ldr		chAdr, 	=font		// load the address of the font map
+	add		chAdr, 	r3, lsl #4	// char address = font base + (char * 16)
 
-	mov			colour, r2
-	mov			py, 	r1			// init the Y coordinate (pixel coordinate)
-	mov			pxINIT,	r0
+	mov		colour, r2
+	mov		py, 	r1			// init the Y coordinate (pixel coordinate)
+	mov		pxINIT,	r0
 
 charLoop$:
-	mov			px,		pxINIT			// init the X coordinate
+	mov		px,		pxINIT			// init the X coordinate
 
-	mov	mask, #0x01						//set the bitmask to 1 in the LSB
+	mov		mask, #0x01						//set the bitmask to 1 in the LSB
 	
 	ldrb	row, [chAdr], #1	// load the row byte, post increment chAdr
 
 rowLoop$:
-	tst	row, mask		// test row byte against the bitmask
-	beq	noPixel$
+	tst		row, mask		// test row byte against the bitmask
+	beq		noPixel$
 
-	mov	r0, px
-	mov	r1, py
-	mov	r2, colour
-	bl	DrawPixel		// draw r2 coloured pixel at (px, py)
+	mov		r0, px
+	mov		r1, py
+	mov		r2, colour
+	bl		DrawPixel		// draw r2 coloured pixel at (px, py)
 
 noPixel$:
-	add	px, #1			// increment x coordinate by 1
-	lsl	mask, #1			// shift bitmask left by 1
+	add		px, #1			// increment x coordinate by 1
+	lsl		mask, #1			// shift bitmask left by 1
 
-	tst	mask, #0x100		// test if the bitmask has shifted 8 times (test 9th bit)
-	beq	rowLoop$
+	tst		mask, #0x100		// test if the bitmask has shifted 8 times (test 9th bit)
+	beq		rowLoop$
 
-	add	py, #1			// increment y coordinate by 1
+	add		py, #1			// increment y coordinate by 1
 
-	tst	chAdr, #0xF
-	bne	charLoop$		// loop back to charLoop$, unless address evenly divisibly by 16 (ie: at the next char)
+	tst		chAdr, #0xF
+	bne		charLoop$		// loop back to charLoop$, unless address evenly divisibly by 16 (ie: at the next char)
 
 
 	.unreq	chAdr
@@ -331,8 +335,8 @@ noPixel$:
 	.unreq	colour
 	.unreq	pxINIT
 
-	pop	{r4-r10, lr}
-	mov	pc, lr
+	pop		{r4-r10, lr}
+	mov		pc, lr
 
 
 
@@ -423,7 +427,7 @@ DrawPixel:
 
 .global gameName
 gameName:
-.asciz	"Arkanoid\n"						@size = 8
+.asciz	"Arkanoid\n"							@size = 8
 
 .global names
 names:
@@ -435,15 +439,15 @@ mainMenu:
 
 .global playGame
 playGame:
-.asciz "Play Game\n"						@size = 9
+.asciz "Play Game\n"							@size = 9
 
 .global quit
 quit:
-.asciz "Quit Game\n"								@size = 4
+.asciz "Quit Game\n"							@size = 4
 
 .global playGameSelect
 playGameSelect:
-.asciz	"> Play Game"						@size = 11
+.asciz	"> Play Game"							@size = 11
 
 .global quitSelect
 quitSelect:

@@ -58,46 +58,133 @@ checkCollision:
 		ldrb	r5,	[r4, #4]			@ ball y
 		ldr		r6,	[r4, #9]			@ ball velocity y
 
-		add		r7,	r5,	r6
-		mov		r9, #7	
+		add		r7,	r5,	r6				@the calculated next ball coordinate
+
+		mov		r9, #2	
 		cmp		r7,	r9
 		beq		hitCeil
-		
+
+		@needs to be IMPLEMENTED PROPERLY
 		mov		r9, #20	
 		cmp		r7,	r9
-		beq		hitPaddel	
+		beq		hitPaddel
+
+@loop to check if you hit any of the objects
+
+checkX:
+
+		ldrb	r5,	[r4, #3]			@ ball x
+		ldr		r6,	[r4, #12]			@ ball velocity x
+		
+		mov		r9,	#20
+		cmp		r7,	r9
+		beq		hitLeftWall
+
+		mov		r9,	#40
+		cmp		r7,	r9
+		beq		hitRightWall
 		@increment score
 		b		done
 		
 hitCeil:
 		mov		r1,	#1
 		str		r1,	[r4, #9]
-		b		done
+		b		checkX
 		
 hitPaddel:
 		mov		r1,	#-1
 		str		r1,	[r4, #9]
+		b		checkX
+
+hitLeftWall:
+		mov		r1,	#1
+		str		r1,	[r4, #12]
+		b		done
+
+hitRightWalls:
+		mov		r1,	#-1
+		str		r1,	[r4, #12]
 		b		done
 		
 done:
+		@bl		checkHitBlock
 		
 		pop		{r4-r11, pc}
+
+
+
 		
 @NEEDS TO BE IMPLEMENTED
-@return 1 if in bounds
-@return 0 if out of bounds
-.global checkBounds
-checkBounds:
+.global checkHitBlock
+checkHitBlock:
 		push	{r4-r11, lr}
 		
-		mov		r4,	r0		@x
-		mov		r5,	r1		@y
-		mov		r6,	r2		@offset x
-		mov		r7,	r3		@offset y
+		ldr		r4,	=gameState
+		ldr		r5, =imageArray
+
+		ldrb	r6,	[r4, #3]		@ x
+		ldr		r7,	[r4, #5]		@ velocity x
+		add		r8,	r6, r7			@ calculated coordinate
+		sub		r8,	r8,	#20
+
+		ldrb	r6,	[r4, #4]		@ y
+		ldr		r7,	[r4, #9]		@ velocity y
+		add		r9,	r6, r7			@ calculated coordinate
+		sub		r9,	r9,	#2
+
+		mov		r6, #20
+		mul		r6,	r6,	r8
+		mul		r7, r6, r9
 		
-		ldr		r6,	=gameState
-		ldrb	r8,	[r6, r2]
-		ldrb	r9,	[r6, r3]
+		ldr		r8,	[r5, r7]
+		cmp		r8, #2
+		beq		hitRed
+
+		ldr		r8,	[r5, r7]
+		cmp		r8, #3
+		beq		hitYellow
+
+		ldr		r8,	[r5, r7]
+		cmp		r8, #3
+		beq		hitPink
+
+		b		doneCheckHit
+
+hitRed:
+		mov		r9,	#3
+		strb	r9,	[r5, r7]
+
+		mov		r9,	#1
+		str		r9, [r4, #9]
+
+		@mov		r9,	#1
+		@str		r9, [r4, #5]
+
+		b		doneCheckHit
+
+hitYellow:
+		mov		r9,	#4
+		strb	r9,	[r5, r7]
+
+		mov		r9,	#1
+		str		r9, [r4, #9]
+
+		@mov		r9,	#-1
+		@str		r9, [r4, #5]
+
+		b		doneCheckHit
+
+hitPink:
+		mov		r9,	#0
+		strb	r9,	[r5, r7]
+
+		mov		r9,	#1
+		str		r9, [r4, #9]
+
+		@mov		r9,	#-1
+		@str		r9, [r4, #5]
+
+doneCheckHit			
 		
 		pop		{r4-r11, pc}
 
