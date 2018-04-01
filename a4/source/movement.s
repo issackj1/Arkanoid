@@ -135,7 +135,7 @@ checkHitBlock:
 
 		mov		r7, #20
 		mul		r7,	r8
-		mul		r7, r9
+		add		r7, r9
 		
 		ldrb	r8,	[r5, r7]
 		cmp		r8, #2
