@@ -3,12 +3,11 @@
 
 @ASSIGNMENT CHECK LIST[]
 
-@Main Menu Screen	  	[]5
-@Draw game State 		[]29
-@Draw game menu	  		[]4
-@interact with game	  	[]8
+@Main Menu Screen	  		[]5
+@Draw game State 			[]29
+@Draw game menu	  			[]4
+@interact with game	  		[]8
 @interact with game menu	[]4
-
 
 
 @ Code section
@@ -17,14 +16,14 @@
 
 .global main
 main:
-	@ ask for the frame buffer information
-	ldr		r0, =frameBufferInfo		@frame buffer information structure
-	bl		initFbInfo
-	
-	//move the paddle
-
-.global next
-next:	
+		@ ask for the frame buffer information
+		ldr		r0, =frameBufferInfo		@frame buffer information structure
+		bl		initFbInfo
+		//bl		initGPIO
+		
+		bl		MainMenuStart
+.global StartGame
+StartGame:		
 	mov	r5, #1
 	mov	r11,	#300	//init x 
 	mov	r10,	#100	//init y
@@ -46,11 +45,8 @@ check:
 	beq	setRed
 	
 checkBranch:
-	mov	r11, #876
-	mov	r10, #658
 	cmp	r5, #1
-	//beq	initPaddle
-	beq	callSNES
+	beq	initPaddle
 	bne	haltLoop$
 	
 initPaddle:
@@ -108,35 +104,10 @@ changeBoth:
 	add		r10, r10, #31
 	mov		r11, #236
 	b		onlyX	
-
-callSNES:
-	bl	SNESmain
-
-	mov	r8, r0
-	
-	ldr	r1,	=0xFEFF
-	cmp	r8,	r1
-	beq	setPaddleR
-	
-	ldr	r1,	=0xFDFF
-	cmp	r8,	r1
-	beq	setPaddleL
-	
-	b	initPaddle
-	
-setPaddleR:
-	add	r11,	#100		//horizontal
-	mov	r10,	#658
-	bl	drawPaddle
-	
-setPaddleL:
-	sub	r11,	#100		//horizontal
-	mov	r10,	#658
-	bl	drawPaddle
-	
-
+.global haltLoop$		
 haltLoop$:
 		b	haltLoop$
+
 
 @ Data section
 .section .data
@@ -189,11 +160,21 @@ imageArray:
 .byte		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 
 
+
+Print:	.asciz "HI\n"
+
+
 endArray:
 .align
 
-
-
-
-
-
+.global gameState
+gameState:
+.byte		28,29,30		@ paddel x coord
+.byte		29, 19			@ Ball x Coord, y coord,
+.int		1 				@ Velocity x
+.int		-1				@ Velocity y
+.byte		0				@ score
+.byte		0				@ Level
+.byte		0				@ Win / Lose
+.byte		20,	40			@ mix x, max x
+.byte		2,	22			@ min y, max y

@@ -45,8 +45,8 @@ delay:
 		mov		r0,	#60000										@Delays 60000 us
 		bl		delayMicroseconds		
 		bl		Read_SNES
-		cmp		r7, r0											@Checks if two buttons are pressed simulataneously
-		beq		delay						
+		//cmp		r7, r0											@Checks if two buttons are pressed simulataneously
+		//beq		delay						
 		cmp		r0, r10											@Makes sure a button was pressed
 		beq		delay						
 		bl		checkMsg
@@ -214,8 +214,7 @@ pulseLoop:
 printB:
 		ldr		r0,	=butB
 		bl		printf
-		mov		r0, r6
-		pop		{r1, pc}
+		b		request
 printY:
 		ldr		r0,	=butY
 		bl		printf
@@ -229,11 +228,14 @@ printSelect:
 printUp:
 		ldr		r0,	=butUp
 		bl		printf
-		b		request
+		mov		r0, r6
+		pop		{r1, pc}
 printDown:
 		ldr		r0,	=butDown
 		bl		printf
-		b		request
+		//b		request
+		mov		r0, r6
+		pop		{r1, pc}
 printLeft:
 		ldr		r0,	=butLeft
 		bl		printf

@@ -1,5 +1,3 @@
-@ CPSC 359 L01 Assignment 4
-@ Daniel Nwaroh & Issack John & Steve Khanna
 
 @ Code section
 .section .text
@@ -37,10 +35,7 @@ draw:
 	mov	pc, lr
 	
 	
-@ Draw Pixel
-@ r0 - x
-@ r1 - y
-@ r2 - color		
+
 
 .global DrawPixel
 DrawPixel:
@@ -55,6 +50,7 @@ DrawPixel:
 	str	r2,	[r0, offset]
 	pop		{r4, r5}
 	bx		lr
+
 
 .global	drawImage
 drawImage:
@@ -100,6 +96,37 @@ done1:
 		pop	{r5-r10, lr}
 		mov	pc, lr
 
-		
+@ Data section
+.section .data
 
+.global gameName
+gameName:
+.asciz	"Arkanoid\n"							@size = 8
 
+.global names
+names:
+.asciz	"Created by: Daniel Nwaroh, Issack John and Steve Khanna\n"	 @size = 56
+
+.global mainMenu
+mainMenu:
+.asciz	"Main Menu"
+
+.global playGame
+playGame:
+.asciz "Play Game\n"							@size = 9
+
+.global quit
+quit:
+.asciz "Quit Game\n"							@size = 4
+
+.global playGameSelect
+playGameSelect:
+.asciz	"> Play Game"							@size = 11
+
+.global quitSelect
+quitSelect:
+.asciz	"> Quit Game"							@size = 6
+
+.global gameOver
+gameOver:
+.asciz "CYA NERD"
