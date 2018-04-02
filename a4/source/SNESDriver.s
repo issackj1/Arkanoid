@@ -288,7 +288,7 @@ checkButtons:
 delayy:	
 		bl		Read_SNES										@Calls the function
 		mov		r7,	r0											@Copy of returned val from func
-		mov		r0,	#30000											@Delays 60000 us
+		mov		r0,	#30000										@Delays 60000 us
 		bl		delayMicroseconds		
 		bl		Read_SNES
 		cmp		r7, r0											@Checks if two buttons are pressed simulataneously
@@ -301,6 +301,7 @@ checkdone:
 
 @ Data section
 .section    .data
+
 .global gpioBaseAddress
 gpioBaseAddress:
 .int		0

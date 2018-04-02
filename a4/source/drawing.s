@@ -6,8 +6,8 @@
 @ Draws the ball and paddel0
 .global DrawGameState
 DrawGameState:
-		push	{lr}
 
+		push	{lr}
 		mov		r0,	#20000
 		bl		delayMicroseconds
 
@@ -21,12 +21,11 @@ DrawGameState:
 .global ClearBallAndPaddel
 ClearBallAndPaddel:
 		push	{lr}
-		ldr		r0,	=background
+		ldr		r0,	=padel
 		bl		DrawPaddel
 		
-		ldr		r0,	=background
+		ldr		r0,	=backGround
 		bl		DrawBall
-
 		pop		{pc}
 
 
@@ -71,7 +70,7 @@ DrawBall:
 @ Draws the black background on the screen, floor tiles
 .global	DrawBlackBackGround
 DrawBlackBackGround:
-		push	{r4-r11, lr}
+		push	{r4-r5, lr}
 		mov		r4,	#20
 		mov		r5,	#2
 		b		loopblackrow
@@ -91,12 +90,12 @@ loopblackrow:
 		add		r5,	#1
 		cmp		r5,	#22
 		blt		nextb
-		pop		{r4-r11, pc}
+		pop		{r4-r5, pc}
 
-Draws the grid on the screen, blocks and wall
+@Draws the grid on the screen, blocks and wall
 .global DrawGrid
 DrawGrid:
-		push 	{r4-r11, lr}
+		push 	{r4-r7, lr}
 		mov		r4,	#20
 		mov		r5,	#2
 		ldr		r6,	=imageArray
@@ -124,9 +123,6 @@ loopdrow:
 		cmp		r7,	#4
 		ldreq	r3,	=pink
 		
-		cmp		r7,	#5
-		ldreq	r3,	=padel
-		
 		bl		DrawSquare
 		
 		add		r4,	#1
@@ -136,7 +132,7 @@ loopdrow:
 		cmp		r5,	#22
 		blt		next
 		
-		pop	{r4-r11, pc}
+		pop	{r4-r7, pc}
 
 @ Draw a sqaure on the screen
 @ Takes in the address of the picture in r3
@@ -175,11 +171,11 @@ drawPictureLoop:
 		mov		r4,	r10				@ reset x
 		add		r5,	#1				@ increment Y
 
-		cmp		r5,	r8				//compare y with image height
+		cmp		r5,	r8				@ compare y with image height
 		blt		drawPictureLoop
 		
 		pop    {r4-r11,lr}
-		mov		pc,	lr				//return
+		mov		pc,	lr				@ return
 
 
 

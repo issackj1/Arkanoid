@@ -30,7 +30,7 @@ GameLoop$:
 		bl		DrawBall
 
 		mov		r5, #-1
-		str 	r5,	[r4, #7]			@ ball velocity y
+		str 	r5,	[r4, #9]			@ ball velocity y
 
 		mov		r5, #1
 		str 	r5,	[r4, #5]			@ ball velocity x
@@ -46,7 +46,7 @@ GameLoopTop:
 		bl		checkCollision
 
 		ldrb	r5,	[r4, #4]
-		ldr 	r6,	[r4, #7]			@ ball velocity y
+		ldr 	r6,	[r4, #9]			@ ball velocity y
 		
 		add		r5,	r6					@ apply change
 		strb	r5,	[r4, #4]			@ store
@@ -98,6 +98,7 @@ MainMenuTop:
 MainMenuQuit:
 		bl		DrawMenuQuitSelected @ Draws the menu with Quit selected
 		
+MainMenuQuitTop:
 		bl		checkButtons
 		mov		r8,	r0
 
@@ -111,7 +112,7 @@ MainMenuQuit:
 		cmp		r8,	r1
 		beq		QuitState
 		
-		b		MainMenuQuit
+		b		MainMenuQuitTop
 		
 startGame:
 		bl		DrawGrid				@ Draws the grid on the screen

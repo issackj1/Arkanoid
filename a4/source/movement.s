@@ -59,7 +59,7 @@ checkCollision:
 		ldr		r10, =imageArray
 		
 		ldrb	r5,	[r4, #4]			@ ball y
-		ldr		r6,	[r4, #7]			@ ball velocity y
+		ldr		r6,	[r4, #9]			@ ball velocity y
 
 		add		r7,	r5,	r6				@the calculated next ball coordinate
 
@@ -92,12 +92,12 @@ checkX:
 		
 hitCeil:
 		mov		r1,	#1
-		str		r1,	[r4, #7]
+		str		r1,	[r4, #9]
 		b		checkX
 		
 hitPaddel:
 		mov		r1,	#-1
-		str		r1,	[r4, #7]
+		str		r1,	[r4, #9]
 		b		checkX
 
 hitLeftWall:
@@ -111,7 +111,7 @@ hitRightWall:
 		b		done
 		
 done:
-		bl		checkHitBlock
+		@bl		checkHitBlock
 		
 		pop		{r4-r11, pc}
 
@@ -129,15 +129,15 @@ checkHitBlock:
 		ldrb	r6,	[r4, #3]		@ x
 		ldr		r7,	[r4, #5]		@ velocity x
 		add		r8,	r6, r7			@ calculated coordinate
-		sub		r8,	r8,	#20
+		sub		r8,	#20
 
 		ldrb	r6,	[r4, #4]		@ y
-		ldr		r7,	[r4, #7]		@ velocity y
+		ldr		r7,	[r4, #9]		@ velocity y
 		add		r9,	r6, r7			@ calculated coordinate
-		sub		r9,	r9,	#2
+		sub		r9,	#2
 
 		mov		r7, #20
-		mul		r7,	r8
+		@mul	r7, r7,	r8
 		add		r7, r9
 		
 		ldrb	r8,	[r5, r7]
@@ -158,8 +158,8 @@ hitRed:
 		mov		r9,	#3
 		strb	r9,	[r5, r7]
 
-		mov		r9,	#1
-		str		r9, [r4, #7]
+		@mov		r9,	#1
+		@str		r9, [r4, #9]
 
 		@mov		r9,	#1
 		@str		r9, [r4, #5]
@@ -170,8 +170,8 @@ hitYellow:
 		mov		r9,	#4
 		strb	r9,	[r5, r7]
 
-		mov		r9,	#1
-		str		r9, [r4, #7]
+		@mov		r9,	#1
+		@str		r9, [r4, #9]
 
 		@mov		r9,	#-1
 		@str		r9, [r4, #5]
@@ -182,8 +182,8 @@ hitPink:
 		mov		r9,	#0
 		strb	r9,	[r5, r7]
 
-		mov		r9,	#1
-		str		r9, [r4, #7]
+		@mov		r9,	#1
+		@str		r9, [r4, #9]
 
 		@mov		r9,	#-1
 		@str		r9, [r4, #5]
