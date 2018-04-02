@@ -1,3 +1,8 @@
+@ CPSC 359 L01 Assignment 4
+@ Daniel Nwaroh & Issack John & Steve Khanna
+@ Daniel Nwaroh: 30017476
+@ Steve Khanna: 10153930
+@ Issack John: 30031053
 
 @ Code section
 .section .text
@@ -8,20 +13,21 @@
 DrawGameState:
 
 		push	{lr}
-		mov		r0,	#20000
-		bl		delayMicroseconds
 
+		bl		DrawGrid
+		
 		ldr		r0,	=padel
 		bl		DrawPaddel
 		
 		ldr		r0,	=ball
 		bl		DrawBall
+		
 		pop		{pc}
 
 .global ClearBallAndPaddel
 ClearBallAndPaddel:
 		push	{lr}
-		ldr		r0,	=padel
+		ldr		r0,	=backGround
 		bl		DrawPaddel
 		
 		ldr		r0,	=backGround
@@ -108,6 +114,7 @@ loopdrow:
 		mov		r1,	r5		
 		
 		ldrb	r7,	[r6], #1
+		
 		cmp		r7,	#0
 		ldreq	r3,	=backGround
 		
@@ -178,83 +185,6 @@ drawPictureLoop:
 		mov		pc,	lr				@ return
 
 
-
-		@DEPRECATED
-/*
-.global drawStart
-drawStart:
-		push	{r4-r8, lr}
-		
-		@draw game title
-		mov		r4,	#0
-		mov		r5,	#850
-		mov		r6,	#150
-		ldr		r7, =gameName
-loopTitle:
-		ldrb	r0,	[r7, r4]
-		mov		r1,	r5
-		mov		r2,	r6
-		bl		Draw_String
-		add		r4,	#1
-		add		r5,	#15	
-		cmp 	r4,	#8
-		blt		loopTitle
-			
-		@draw PLAY GAME
-		mov		r7,	#0
-		mov		r4,	#0
-		mov		r5,	#850
-		mov		r6,	#350
-		ldr		r7, =playGame	
-loopPlay:
-		ldrb	r0,	[r7, r4]
-		mov		r1,	r5
-		mov		r2,	r6
-		bl		Draw_String
-		add		r4,	#1
-		add		r5,	#15	
-		cmp 	r4,	#9
-		blt		loopPlay
-		
-		@draw QUIT
-		mov		r7,	#0
-		mov		r4,	#0
-		mov		r5,	#890
-		mov		r6,	#450
-		ldr		r7, =quit	
-loopQuit:
-		ldrb	r0,	[r7, r4]
-		mov		r1,	r5
-		mov		r2,	r6
-		bl		Draw_String
-		add		r4,	#1
-		add		r5,	#15	
-		cmp 	r4,	#4
-		blt		loopQuit
-			
-		@draw creator names
-		mov		r7,	#0
-		mov		r4,	#0
-		mov		r5,	#500
-		mov		r6,	#600
-		ldr		r7, =names
-
-loopStart:
-		ldrb	r0,	[r7, r4]
-		mov		r1,	r5
-		mov		r2,	r6
-		bl		Draw_String
-		add		r4,	#1
-		add		r5,	#15	
-		cmp 	r4,	#56
-		blt		loopStart
-		
-		@draw menu options and option selection
-		
-		pop		{r4-r8, pc}
-*/
-
-
 @ Draws a string at the given x and y
 @ r0 = x
 @ r1 = y
@@ -286,12 +216,12 @@ Draw_String_Loop:
 	mov		r3, r9
 	bl		Draw_Char
 
-	add		r8, #1			//increment index
-	add		px, #10			//*******increment spacing for letters*******CHANGE SPACING HERE
+	add		r8, #1					@increment index
+	add		px, #10					@*******increment spacing for letters*******CHANGE SPACING HERE
 
-	ldrb	r9, [senAdr, r8] 	//load next letter in string
+	ldrb	r9, [senAdr, r8] 		@load next letter in string
 	
-	cmp		r9, #0			//compare to /0
+	cmp		r9, #0					@compare to /0
 	bne		Draw_String_Loop
 	
 Draw_String_Loop_Done:
@@ -316,40 +246,40 @@ Draw_Char:
 	colour	.req	r9
 	pxINIT	.req	r10
 
-	ldr		chAdr, 	=font		// load the address of the font map
-	add		chAdr, 	r3, lsl #4	// char address = font base + (char * 16)
+	ldr		chAdr, 	=font			@ load the address of the font map
+	add		chAdr, 	r3, lsl #4		@ char address = font base + (char * 16)
 
 	mov		colour, r2
-	mov		py, 	r1			// init the Y coordinate (pixel coordinate)
+	mov		py, 	r1				@ init the Y coordinate (pixel coordinate)
 	mov		pxINIT,	r0
 
 charLoop$:
-	mov		px,		pxINIT			// init the X coordinate
+	mov		px,		pxINIT			@ init the X coordinate
 
-	mov		mask, #0x01						//set the bitmask to 1 in the LSB
+	mov		mask, #0x01				@ set the bitmask to 1 in the LSB
 	
-	ldrb	row, [chAdr], #1	// load the row byte, post increment chAdr
+	ldrb	row, [chAdr], #1		@ load the row byte, post increment chAdr
 
 rowLoop$:
-	tst		row, mask		// test row byte against the bitmask
+	tst		row, mask				@ test row byte against the bitmask
 	beq		noPixel$
 
 	mov		r0, px
 	mov		r1, py
 	mov		r2, colour
-	bl		DrawPixel		// draw r2 coloured pixel at (px, py)
+	bl		DrawPixel				@ draw r2 coloured pixel at (px, py)
 
 noPixel$:
-	add		px, #1			// increment x coordinate by 1
-	lsl		mask, #1			// shift bitmask left by 1
+	add		px, #1					@ increment x coordinate by 1
+	lsl		mask, #1				@ shift bitmask left by 1
 
-	tst		mask, #0x100		// test if the bitmask has shifted 8 times (test 9th bit)
+	tst		mask, #0x100			@ test if the bitmask has shifted 8 times (test 9th bit)
 	beq		rowLoop$
 
-	add		py, #1			// increment y coordinate by 1
+	add		py, #1					@ increment y coordinate by 1
 
 	tst		chAdr, #0xF
-	bne		charLoop$		// loop back to charLoop$, unless address evenly divisibly by 16 (ie: at the next char)
+	bne		charLoop$				@ loop back to charLoop$, unless address evenly divisibly by 16 (ie: at the next char)
 
 
 	.unreq	chAdr
@@ -365,60 +295,6 @@ noPixel$:
 
 
 
-/**
-@ Draw the character to (x,y)
-.global DrawChar
-DrawChar:
-		push		{r4-r9, lr}
-
-		chAdr	.req	r4
-		px		.req	r5
-		py		.req	r6
-		row		.req	r7
-		mask	.req	r8
-		mov		r9,		r1
-
-		ldr		chAdr, =font		@ load the address of the font map
-		add		chAdr,	r0, lsl #4	@ char address = font base + (char * 16)
-
-		mov		py, r2		@ init the Y coordinate (pixel coordinate)
-
-charLoop$:
-		mov		px, r9		@ init the X coordinate
-
-		mov		mask, #0x01		@ set the bitmask to 1 in the LSB
-		
-		ldrb	row, [chAdr], #1	@ load the row byte, post increment chAdr
-
-rowLoop$:
-		tst		row,	mask		@ test row byte against the bitmask
-		beq		noPixel$
-
-		mov		r0, px
-		mov		r1, py
-		mov		r2, #0x00FF0000		@ red
-		bl		DrawPixel			@ draw red pixel at (px, py)
-
-noPixel$:
-		add		px, #1		@ increment x coordinate by 1
-		lsl		mask, #1		@ shift bitmask left by 1
-
-		tst		mask,	#0x100		@ test if the bitmask has shifted 8 times (test 9th bit)
-		beq		rowLoop$
-
-		add		py, #1			@ increment y coordinate by 1
-
-		tst		chAdr, #0xF
-		bne		charLoop$		@ loop back to charLoop$, unless address evenly divisibly by 16 (ie: at the next char)
-
-		.unreq	chAdr
-		.unreq	px
-		.unreq	py
-		.unreq	row
-		.unreq	mask
-
-		pop		{r4-r9, pc}
-**/
 	
 @ Draw Pixel
 @ r0 - x
@@ -433,7 +309,7 @@ DrawPixel:
 	
 		@offset = (y * width) + x
 	
-		ldr		r3, [r5, #4]			@ r3 = width
+		ldr		r3, [r5, #4]		@ r3 = width
 		mul		r1, r3
 		add		offset, r0, r1
 		
@@ -441,18 +317,60 @@ DrawPixel:
 		lsl		offset, #2
 		
 		@ store the color (word) at frame buffer pointer + offset
-		ldr		r0, [r5]				@ r0 = frame buffer pointer
+		ldr		r0, [r5]			@ r0 = frame buffer pointer
 		str		r2, [r0, offset]
 		
 		pop		{r4, r5}
 		bx		lr
+.global	drawImage
+drawImage:
+		push	{r5-r10, lr}
+		
+		mov	r10, r0
+		mov	r5,	#0
+		mov	r6,	#0
+		ldr	r7, =imageWidth
+		ldr	r7, [r7]
+		ldr	r8, =imageHeight
+		ldr	r8, [r8]
+		
+		mov	r9,	r2
+		
+outerLoop:
 
+		mov	r5, #0					@ reset pixels drawn x
+		mov	r0, r10					@ Re-initialize x -coordinate
+		add	r1, r1,	#1				@ Add one to y coordinate
+		add	r6, r6,	#1				@ Add one to pixels drawn y
+
+		cmp	r6, r8					@ Pixels drawn y < y bound?
+		bge	done1		
+	
+drawLoop1:
+		cmp	r5, r7					@ Pixels drawn < Length?
+		bge	outerLoop				@ If yes, branch to done
+
+		ldr	r2, [r9], #4		
+
+		push	{r0, r1, r2}
+		bl	DrawPixel
+		pop	{r0, r1, r2}			
+		
+		add	r5,	r5, #1				@ Add one to pixels drawn	
+		add	r0,	r0, #1				@ Add one to the x-coordinat
+
+		b	drawLoop1
+		
+
+done1:		
+		pop	{r5-r10, lr}
+		mov	pc, lr
 @ Data section
 .section .data
 
 .global gameName
 gameName:
-.asciz	"Arkanoid\n"							@size = 8
+.asciz	"Arkanoid\n"				@ size = 8
 
 .global names
 names:
@@ -464,20 +382,24 @@ mainMenu:
 
 .global playGame
 playGame:
-.asciz "Play Game\n"							@size = 9
+.asciz "Play Game\n"				@ size = 9
 
 .global quit
 quit:
-.asciz "Quit Game\n"							@size = 4
+.asciz "Quit Game\n"				@ size = 4
 
 .global playGameSelect
 playGameSelect:
-.asciz	"> Play Game"							@size = 11
+.asciz	"> Play Game"				@ size = 11
 
 .global quitSelect
 quitSelect:
-.asciz	"> Quit Game"							@size = 6
+.asciz	"> Quit Game"				@ size = 6
 
 .global gameOver
 gameOver:
 .asciz "CYA NERD"
+
+.global score
+score:
+.asciz "Score: %d\n"
