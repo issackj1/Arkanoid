@@ -8,12 +8,103 @@
 .section .text
 
 
+.global DrawScore
+DrawScore:
+	push	{r4, lr}
+	
+	ldr		r4, =gameState
+	
+	mov		r0,	#23
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#24
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#25
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#26
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	
+	mov		r0,	#28
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#29
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#30
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	mov		r0,	#31
+	mov		r1, #1
+	ldr		r3, =backGround
+	bl		DrawSquare
+	
+	ldrb	r5,	[r4, #13]
+	cmp		r5,	#3
+	beq		plvies3
+	
+	cmp		r5,	#2
+	beq		plvies3
+	
+	cmp		r5,	#1
+	beq		plvies3
+	
+plvies3:
+	mov		r0,	#900
+	mov		r1, #50
+	ldr		r2,	=0xFFFF0F13
+	ldr		r3, =lives
+	bl		Draw_String
+	b		plivesdone
+	
+plvies2:
+	mov		r0,	#900
+	mov		r1, #50
+	ldr		r2,	=0xFFFF0F13
+	ldr		r3, =lives2
+	bl		Draw_String
+	b		plivesdone
+plvies1:
+	mov		r0,	#900
+	mov		r1, #50
+	ldr		r2,	=0xFFFF0F13
+	ldr		r3, =lives1
+	bl		Draw_String
+	
+plivesdone:
+	mov		r0,	#750
+	mov		r1, #50
+	ldr		r2,	=0xFFFF0F13
+	ldr		r3, =score
+	bl		Draw_String
+	
+	pop		{r4, pc}
+
 @ Draws the ball and paddel0
 .global DrawGameState
 DrawGameState:
 
 		push	{lr}
 
+		@mov		r0,	#5000
+		@bl		delayMicroseconds
+		
 		bl		DrawGrid
 		
 		ldr		r0,	=padel
@@ -21,6 +112,8 @@ DrawGameState:
 		
 		ldr		r0,	=ball
 		bl		DrawBall
+		
+		bl		DrawScore
 		
 		pop		{pc}
 
@@ -402,4 +495,16 @@ gameOver:
 
 .global score
 score:
-.asciz "Score: %d\n"
+.asciz "Score: 0\n"
+
+.global lives
+lives:
+.asciz "Lives: 3\n"
+
+.global lives
+lives2:
+.asciz "Lives: 2\n"
+
+.global lives
+lives1:
+.asciz "Lives: 1\n"

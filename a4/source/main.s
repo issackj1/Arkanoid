@@ -90,9 +90,13 @@ GameLoopTop:
 		cmp		r8,	r1					@ if start is pressed, game will pause
 		bleq	pauseMenu
 		
+		ldrb	r6,	[r4, #4]
+		cmp		r6, #19
+		blt		skipLaunch
 		ldr		r1,	=0x7FFF				@ if b is pressed
 		cmp		r8,	r1					@ b launches the ball, so if b is pressed then the ball will be launched to start the game
 		beq		GameLoop$
+skipLaunch:
 
 		@mov		r0,	#20000
 		@bl		delayMicroseconds
@@ -229,8 +233,8 @@ pauseMenuTop:
 		str	r6, [r8]					@ store height
 		ldr	r2, =restart				@ gets the image (where restart is highlighted)
 		bl	drawImage					@ draws image (of course)
-		bl	checkButtons				@ checks input
 		
+		bl	checkButtons				@ checks input
 		mov		r8,	r0					@ moving ibput value to a different register, so we can use it later
 		
 		@ if down is pressed, then the quit option will be highlighted
@@ -260,19 +264,15 @@ restartQuitSelected:
 		mov	r6, #324					@ setting height of image
 		str	r6, [r8]					@ store height
 		ldr	r2, =restartQuit			@ gets the image (where quit is highlighted)
-		bl	drawImage					
+		bl	drawImage
+							
 		bl	checkButtons
-		
 		mov		r8,	r0					@ moving input value to a different register, so we can use it later
 		
 		@ if up is pressed, then the restart option will be highlighted
 		ldr		r1,	=0xF7FF     		@ up is pressed 
 		cmp		r8,	r1
 		beq		pauseMenuTop
-		
-		//ldr		r1, =0xFBFF
-		//cmp		r8, r1
-		//beq		pauseMenuTop
 		
 		@ if start is pressed, we resume the game, continuing where we left off
 		ldr		r1, =0xEFFF				@ start is pressed
@@ -287,6 +287,7 @@ restartQuitSelected:
 		b		restartQuitSelected		@ if anything else is pressed we are just going to go back to the top of this branch
 
 resumeGame:
+
 		pop		{r4-r7, pc}
 
 @ prints a game over message
