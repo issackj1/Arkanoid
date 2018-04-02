@@ -1,3 +1,6 @@
+@ CPSC 359 L01 Assignment 4
+@ Author Issack John
+
 @BOARD VALID BOUNDS IS X = 22 -38
 @BOARD VALID BOUNDS IS Y = 2 - 22
 
@@ -56,7 +59,7 @@ checkCollision:
 		ldr		r10, =imageArray
 		
 		ldrb	r5,	[r4, #4]			@ ball y
-		ldr		r6,	[r4, #9]			@ ball velocity y
+		ldr		r6,	[r4, #7]			@ ball velocity y
 
 		add		r7,	r5,	r6				@the calculated next ball coordinate
 
@@ -89,12 +92,12 @@ checkX:
 		
 hitCeil:
 		mov		r1,	#1
-		str		r1,	[r4, #9]
+		str		r1,	[r4, #7]
 		b		checkX
 		
 hitPaddel:
 		mov		r1,	#-1
-		str		r1,	[r4, #9]
+		str		r1,	[r4, #7]
 		b		checkX
 
 hitLeftWall:
@@ -129,7 +132,7 @@ checkHitBlock:
 		sub		r8,	r8,	#20
 
 		ldrb	r6,	[r4, #4]		@ y
-		ldr		r7,	[r4, #9]		@ velocity y
+		ldr		r7,	[r4, #7]		@ velocity y
 		add		r9,	r6, r7			@ calculated coordinate
 		sub		r9,	r9,	#2
 
@@ -156,7 +159,7 @@ hitRed:
 		strb	r9,	[r5, r7]
 
 		mov		r9,	#1
-		str		r9, [r4, #9]
+		str		r9, [r4, #7]
 
 		@mov		r9,	#1
 		@str		r9, [r4, #5]
@@ -168,7 +171,7 @@ hitYellow:
 		strb	r9,	[r5, r7]
 
 		mov		r9,	#1
-		str		r9, [r4, #9]
+		str		r9, [r4, #7]
 
 		@mov		r9,	#-1
 		@str		r9, [r4, #5]
@@ -180,7 +183,7 @@ hitPink:
 		strb	r9,	[r5, r7]
 
 		mov		r9,	#1
-		str		r9, [r4, #9]
+		str		r9, [r4, #7]
 
 		@mov		r9,	#-1
 		@str		r9, [r4, #5]
@@ -191,5 +194,3 @@ doneCheckHit:
 
 @ Data section
 .section .data
-
-

@@ -3,7 +3,7 @@
 
 @ASSIGNMENT CHECK LIST[]
 
-@Main Menu Screen	  		[]5
+@Main Menu Screen	  		[done]5
 @Draw game State 			[]29
 @Draw game menu	  			[]4
 @interact with game	  		[]8
@@ -24,6 +24,19 @@ main:
 		b		MainMenuStart
 		
 GameLoop$:	
+		ldr		r4,	=gameState
+
+		ldr		r0,	=backGround			@clear ball
+		bl		DrawBall
+
+		mov		r5, #-1
+		str 	r5,	[r4, #7]			@ ball velocity y
+
+		mov		r5, #1
+		str 	r5,	[r4, #5]			@ ball velocity x
+
+
+GameLoopTop:
 		
 		ldr		r4,	=gameState
 		
@@ -33,7 +46,7 @@ GameLoop$:
 		bl		checkCollision
 
 		ldrb	r5,	[r4, #4]
-		ldr 	r6,	[r4, #9]			@ ball velocity y
+		ldr 	r6,	[r4, #7]			@ ball velocity y
 		
 		add		r5,	r6					@ apply change
 		strb	r5,	[r4, #4]			@ store
@@ -44,19 +57,12 @@ GameLoop$:
 		add		r5,	r6					@ apply change
 		strb	r5,	[r4, #3]			@ store
 		
-		b		DrawGameState			
-		
-GameLoopTop:		
-		bl		checkButtons			@wait for input 
+		bl		DrawGameState			@ Draws the ball and paddel		
+				
+		bl		checkButtons			@check input
 		mov		r8, r0
-		
-		ldr		r0,	=backGround			@clear paddel
-		bl		DrawPaddel
-		
-		ldr		r0,	=backGround			@clear ball
-		bl		DrawBall
-		
-		@go see what was pressed
+
+		bl		ClearBallAndPaddel
 		
 		ldr		r1,	=0xFDFF				@left pressed
 		cmp		r8,	r1
@@ -65,19 +71,24 @@ GameLoopTop:
 		ldr		r1,	=0xFEFF	
 		cmp		r8,	r1					@right pressed
 		bleq	moveRight
+
+		@ implement pause	
 		
-		b		GameLoop$
+		b		GameLoopTop
 		
 MainMenuStart:
-		bl		DrawMenuStartSelected
+		bl		DrawMenuStartSelected	@ Draws the menu with start selected
 
 MainMenuTop:
-		bl		checkButtons	
+		bl		checkButtons			@ get input
 		mov		r8,	r0
-		ldr		r1,	=0xFBFF
+
+		@ if they press down go to main menu quit selected state
+		ldr		r1,	=0xFBFF	
 		cmp		r8,	r1
 		beq		MainMenuQuit
 		
+		@ if they press a go to start game state
 		ldr		r1,	=0xFF7F
 		cmp		r8,	r1
 		beq		startGame
@@ -85,14 +96,17 @@ MainMenuTop:
 		b		MainMenuTop
 		
 MainMenuQuit:
-		bl		DrawMenuQuitSelected
+		bl		DrawMenuQuitSelected @ Draws the menu with Quit selected
 		
 		bl		checkButtons
 		mov		r8,	r0
+
+		@ if the press up go to main menu play selected
 		ldr		r1,	=0xF7FF
 		cmp		r8,	r1
 		beq		MainMenuStart
 		
+		@ if they press a then go to the quit game state
 		ldr		r1,	=0xFF7F
 		cmp		r8,	r1
 		beq		QuitState
@@ -100,27 +114,29 @@ MainMenuQuit:
 		b		MainMenuQuit
 		
 startGame:
-		bl		DrawGrid
-		ldr		r0,	=padel
-		bl		DrawPaddel
-		ldr		r0,	=ball
-		bl		DrawBall
+		bl		DrawGrid				@ Draws the grid on the screen
+
 startGameTop:
-		bl		checkButtons
+		bl		ClearBallAndPaddel
+		bl		DrawGameState
+
+		bl		checkButtons			@ checks input
+
+		@ if they press a then launch the ball and start the game
+		mov		r8,	r0
 		ldr		r1,	=0xFF7F
 		cmp		r8,	r1
 		beq		GameLoop$
-		b		startGameTop
 
-DrawGameState:
-		
-		ldr		r0,	=padel
-		bl		DrawPaddel
-		
-		ldr		r0,	=ball
-		bl		DrawBall
-		
-		b		GameLoopTop
+		ldr		r1,	=0xFDFF				@left pressed
+		cmp		r8,	r1
+		bleq	moveLeft
+
+		ldr		r1,	=0xFEFF	
+		cmp		r8,	r1					@right pressed
+		bleq	moveRight
+
+		b		startGameTop
 
 QuitState:
 		bl		DrawBlackBackGround
@@ -146,25 +162,26 @@ QuitState:
 @ 4 = ball y
 @ 5 = velocity x
 @ 9 = velocity y
-@ 12 = score
-@ 13 = Level
-@ 14 = Win / Lose Flag
-@ 15 = minimum x
-@ 16 = maximum x
-@ 17 = minimum y
-@ 18 = maximum y
+@ 13 = score
+@ 14 = Level
+@ 15 = Win / Lose Flag
+@ 16 = minimum x
+@ 17 = maximum x
+@ 18 = minimum y
+@ 19 = maximum y
 
 .global gameState
 gameState:
 .byte		28,29,30		@ paddel x coord
 .byte		29, 19			@ Ball x Coord, y coord,
-.int		1 				@ Velocity x
-.int		-1				@ Velocity y
-.byte		0				@ score
-.byte		0				@ Level
-.byte		0				@ Win / Lose
-.byte		20,	40			@ mix x, max x
-.byte		2,	22			@ min y, max y
+.int		0 				@ Velocity x
+.int		0				@ Velocity y
+
+@.byte		0				@ score
+@.byte		0				@ Level
+@.byte		0				@ Win / Lose
+@.byte		20,	40			@ mix x, max x
+@.byte		2,	22			@ min y, max y
 
 
 .align

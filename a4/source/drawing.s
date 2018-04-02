@@ -3,14 +3,42 @@
 .section .text
 
 
+@ Draws the ball and paddel0
+.global DrawGameState
+DrawGameState:
+		push	{lr}
+
+		mov		r0,	#20000
+		bl		delayMicroseconds
+
+		ldr		r0,	=padel
+		bl		DrawPaddel
+		
+		ldr		r0,	=ball
+		bl		DrawBall
+		pop		{pc}
+
+.global ClearBallAndPaddel
+ClearBallAndPaddel:
+		push	{lr}
+		ldr		r0,	=background
+		bl		DrawPaddel
+		
+		ldr		r0,	=background
+		bl		DrawBall
+
+		pop		{pc}
+
 
 @ Draws the paddle on the screen
+@ 3 similar blocks to portray a longer paddel
 .global DrawPaddel
 DrawPaddel:
 		push	{r4-r11, lr}
 		
 		mov		r8,	r0
-		ldr		r4,	=gameState
+		ldr		r4,	=gameState			@get the game state array
+
 		mov		r7,	#0
 		
 drawPaddelAgain:		
@@ -30,17 +58,15 @@ drawPaddelAgain:
 @ Draws the ball on the screen
 .global DrawBall
 DrawBall:
-		push	{r4-r11, lr}
+		push	{r4, lr}
 		ldr		r4,	=gameState
-		mov		r7, #0
 		
-		mov		r8,	r0
+		mov		r3,	r0
 		ldrb	r0,	[r4, #3]
 		ldrb	r1,	[r4, #4]
-		mov		r3,	r8
 		bl		DrawSquare
 		
-		pop	{r4-r11, pc}
+		pop	{r4, pc}
 
 @ Draws the black background on the screen, floor tiles
 .global	DrawBlackBackGround
@@ -113,7 +139,7 @@ loopdrow:
 		pop	{r4-r11, pc}
 
 @ Draw a sqaure on the screen
-@ Takes in the address of the pciture in r3
+@ Takes in the address of the picture in r3
 .globl DrawSquare
 DrawSquare:
 		push		{r4-r11,lr}
@@ -123,28 +149,31 @@ DrawSquare:
 		lsl		r10,r0, #5                              
 		lsl 	r11,r1, #5 
 
-		mov		r4,	r10				//Start X position of your picture
-		mov		r5,	r11
-		mov		r6,	r3				//Address of the picture
-		mov		r7,	r4
-		add     r7, #32
-		mov		r8, r5
-		add     r8, #32
-drawPictureLoop:
-		mov		r0,	r4				//passing x for r0 which is used by the Draw pixel function 
-		mov		r1,	r5				//passing y for r1 which is used by the Draw pixel formula 
-		
-		ldr		r2,	[r6],#4 		//setting pixel color by loading it from the data section. We load half word
-		push	{r3}
-		bl		DrawPixel
-		pop		{r3}
-		add		r4,	#1				//increment x position
+		mov		r4,	r10				@ starting x position of the picture
+		mov		r5,	r11				@ starting y position of the picture
 
-		cmp		r4,	r7				//compare with image with
+		mov		r6,	r3				@ address of the picture
+		mov		r7,	r4				@ start x
+
+		add     r7, #32				@ add 32 to x
+		mov		r8, r5				
+		add     r8, #32				@ add 32 to y
+
+drawPictureLoop:
+		mov		r0,	r4
+		mov		r1,	r5
+		
+		ldr		r2,	[r6], #4 		@ setting pixel color
+		push	{r3}				@ to make sure r3 does not get messed up
+		bl		DrawPixel			
+		pop		{r3}				
+		add		r4,	#1				@ increment x position
+
+		cmp		r4,	r7				@compare with image width
 		blt		drawPictureLoop
 
-		mov		r4,	r10				//reset x
-		add		r5,	#1				//increment Y
+		mov		r4,	r10				@ reset x
+		add		r5,	#1				@ increment Y
 
 		cmp		r5,	r8				//compare y with image height
 		blt		drawPictureLoop
