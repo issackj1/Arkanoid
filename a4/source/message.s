@@ -26,11 +26,11 @@ loopNames:
 .global	DrawChar
 DrawChar:
 		push	{r0-r8, lr}
-		chAdr		.req	r4
+		chAdr	.req	r4
 		px		.req	r5
 		py		.req	r6
 		row		.req	r7
-		mask		.req	r8
+		mask	.req	r8
 
 		ldr		chAdr, =font		@ load the address of the font map
 		mov		r0, #'B'		@ load the character into r0
@@ -43,7 +43,7 @@ charLoop$:
 
 		mov		mask, #0x01		@ set the bitmask to 1 in the LSB
 		
-		ldrb		row, [chAdr], #1	@ load the row byte, post increment chAdr
+		ldrb	row, [chAdr], #1	@ load the row byte, post increment chAdr
 
 rowLoop$:
 		tst		row,	mask		@ test row byte against the bitmask
